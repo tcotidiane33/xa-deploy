@@ -1,0 +1,1267 @@
+
+CREATE TABLE `attachments` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `post_id` bigint(20) UNSIGNED NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `mime_type` varchar(255) NOT NULL,
+  `size` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `audits`
+--
+
+CREATE TABLE `audits` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_type` varchar(255) DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `event` varchar(255) NOT NULL,
+  `auditable_type` varchar(255) NOT NULL,
+  `auditable_id` bigint(20) UNSIGNED NOT NULL,
+  `old_values` text DEFAULT NULL,
+  `new_values` text DEFAULT NULL,
+  `url` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(1023) DEFAULT NULL,
+  `tags` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `clients`
+--
+
+CREATE TABLE `clients` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `responsable_paie_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `gestionnaire_principal_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `date_debut_prestation` date DEFAULT NULL,
+  `date_estimative_envoi_variables` date DEFAULT NULL,
+  `date_rappel_mail` date DEFAULT NULL,
+  `status` varchar(255) DEFAULT 'actif',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `nb_bulletins` int(11) DEFAULT 0,
+  `maj_fiche_para` date DEFAULT NULL,
+  `convention_collective_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `is_portfolio` tinyint(1) NOT NULL DEFAULT 0,
+  `parent_client_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `type_societe` varchar(255) DEFAULT NULL,
+  `ville` varchar(255) DEFAULT NULL,
+  `dirigeant_nom` varchar(255) DEFAULT NULL,
+  `dirigeant_telephone` varchar(255) DEFAULT NULL,
+  `dirigeant_email` varchar(255) DEFAULT NULL,
+  `binome_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `responsable_telephone_ld` varchar(255) DEFAULT NULL,
+  `gestionnaire_telephone_ld` varchar(255) DEFAULT NULL,
+  `binome_telephone_ld` varchar(255) DEFAULT NULL,
+  `saisie_variables` tinyint(1) NOT NULL DEFAULT 0,
+  `client_forme_saisie` tinyint(1) NOT NULL DEFAULT 0,
+  `date_formation_saisie` date DEFAULT NULL,
+  `date_fin_prestation` date DEFAULT NULL,
+  `date_signature_contrat` date DEFAULT NULL,
+  `taux_at` varchar(255) DEFAULT NULL,
+  `adhesion_mydrh` tinyint(1) NOT NULL DEFAULT 0,
+  `date_adhesion_mydrh` date DEFAULT NULL,
+  `is_cabinet` tinyint(1) NOT NULL DEFAULT 0,
+  `portfolio_cabinet_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `contact_paie` varchar(255) DEFAULT NULL,
+  `contact_comptabilite` varchar(255) DEFAULT NULL,
+  `contact_paie_nom` varchar(255) DEFAULT NULL,
+  `contact_paie_prenom` varchar(255) DEFAULT NULL,
+  `contact_paie_telephone` varchar(255) DEFAULT NULL,
+  `contact_paie_email` varchar(255) DEFAULT NULL,
+  `contact_compta_nom` varchar(255) DEFAULT NULL,
+  `contact_compta_prenom` varchar(255) DEFAULT NULL,
+  `contact_compta_telephone` varchar(255) DEFAULT NULL,
+  `contact_compta_email` varchar(255) DEFAULT NULL,
+  `reference` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `clients`
+--
+
+INSERT INTO `clients` (`id`, `name`, `responsable_paie_id`, `gestionnaire_principal_id`, `date_debut_prestation`, `date_estimative_envoi_variables`, `date_rappel_mail`, `status`, `created_at`, `updated_at`, `nb_bulletins`, `maj_fiche_para`, `convention_collective_id`, `is_portfolio`, `parent_client_id`, `type_societe`, `ville`, `dirigeant_nom`, `dirigeant_telephone`, `dirigeant_email`, `binome_id`, `responsable_telephone_ld`, `gestionnaire_telephone_ld`, `binome_telephone_ld`, `saisie_variables`, `client_forme_saisie`, `date_formation_saisie`, `date_fin_prestation`, `date_signature_contrat`, `taux_at`, `adhesion_mydrh`, `date_adhesion_mydrh`, `is_cabinet`, `portfolio_cabinet_id`, `contact_paie`, `contact_comptabilite`, `contact_paie_nom`, `contact_paie_prenom`, `contact_paie_telephone`, `contact_paie_email`, `contact_compta_nom`, `contact_compta_prenom`, `contact_compta_telephone`, `contact_compta_email`, `reference`) VALUES
+(1, 'SOCOCE', NULL, NULL, NULL, '2024-10-14', NULL, 'actif', '2024-10-30 14:55:49', '2024-10-30 14:55:49', 254, NULL, NULL, 0, NULL, 'PME', 'ABIDJAN', 'ALBERT RITHZ', '708967450', 'bio@gmail.com', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TP-BENTXLP5'),
+(4, 'EUREKA', NULL, NULL, NULL, '2024-10-14', NULL, 'actif', '2024-10-30 15:47:46', '2024-10-30 15:47:46', 231, NULL, NULL, 0, NULL, 'PME', 'BOUMBAI', 'Shark Noy', '0987658989', 'tco@gmail.com', NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TP-UIXTJIY2'),
+(5, 'SOLARY', 6, 15, '2024-11-06', '2024-11-12', '2024-11-13', 'actif', '2024-10-30 15:52:28', '2024-11-06 14:57:40', 200, '2024-11-07', 1, 0, NULL, 'PME', 'BIAMA', 'LILIAN HOOK', '07986754111', 'lil@gmail.com', 7, '0887908709', NULL, NULL, 1, 1, '2024-11-06', '2024-11-05', '2024-08-01', '13', 1, '2024-11-07', 1, NULL, NULL, NULL, 'LILIPUS', 'BOOM', '0798769876', 'lilipus@gmail.com', 'POLLO ', 'KEEN', '8098877698', 'pollo@gmail.com', 'TP-81BEDUO1');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `client_histories`
+--
+
+CREATE TABLE `client_histories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `maj_fiche_para` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `comments`
+--
+
+CREATE TABLE `comments` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `post_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `nom` varchar(255) DEFAULT NULL,
+  `prenom` varchar(255) DEFAULT NULL,
+  `telephone` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `convention_collective`
+--
+
+CREATE TABLE `convention_collective` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `idcc` varchar(4) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `convention_collective`
+--
+
+INSERT INTO `convention_collective` (`id`, `idcc`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, '1278', 'CBVS', NULL, '2024-11-01 11:07:12', '2024-11-01 11:07:12'),
+(2, '1972', 'TEST', NULL, '2024-11-06 15:04:26', '2024-11-06 15:04:26'),
+(3, '0123', 'REST', NULL, '2024-11-06 15:04:52', '2024-11-06 15:04:52');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `documents`
+--
+
+CREATE TABLE `documents` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `events`
+--
+
+CREATE TABLE `events` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `start` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `end` timestamp NULL DEFAULT NULL,
+  `color` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `failed_jobs`
+--
+
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `files`
+--
+
+CREATE TABLE `files` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `traitement_paie_id` bigint(20) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `mails`
+--
+
+CREATE TABLE `mails` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `expediteur_id` bigint(20) UNSIGNED NOT NULL,
+  `recepteur_id` bigint(20) UNSIGNED NOT NULL,
+  `content` text NOT NULL,
+  `statut` enum('envoye','recu','lu') NOT NULL DEFAULT 'envoye',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `materials`
+--
+
+CREATE TABLE `materials` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `content` text DEFAULT NULL,
+  `content_url` varchar(255) DEFAULT NULL,
+  `field_name` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `material_histories`
+--
+
+CREATE TABLE `material_histories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `material_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `details` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `migrations`
+--
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `model_has_permissions`
+--
+
+CREATE TABLE `model_has_permissions` (
+  `permission_id` bigint(20) UNSIGNED NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `model_has_roles`
+--
+
+CREATE TABLE `model_has_roles` (
+  `role_id` bigint(20) UNSIGNED NOT NULL,
+  `model_type` varchar(255) NOT NULL,
+  `model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `type` enum('traitement_debut','echeance_proche','variables_attendues') NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `notifiable_type` varchar(255) NOT NULL,
+  `notifiable_id` bigint(20) UNSIGNED NOT NULL,
+  `read_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `periodes_paie`
+--
+
+CREATE TABLE `periodes_paie` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `reference` varchar(255) NOT NULL,
+  `debut` date NOT NULL,
+  `fin` date NOT NULL,
+  `validee` tinyint(1) NOT NULL DEFAULT 0,
+  `client_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `reception_variables` date DEFAULT NULL,
+  `preparation_bp` date DEFAULT NULL,
+  `validation_bp_client` date DEFAULT NULL,
+  `preparation_envoie_dsn` date DEFAULT NULL,
+  `accuses_dsn` date DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `periodes_paie`
+--
+
+INSERT INTO `periodes_paie` (`id`, `reference`, `debut`, `fin`, `validee`, `client_id`, `reception_variables`, `preparation_bp`, `validation_bp_client`, `preparation_envoie_dsn`, `accuses_dsn`, `notes`, `created_at`, `updated_at`) VALUES
+(13, 'PERIODE_NOVEMBER_2024_672acb1d94e0d', '2024-08-15', '2024-09-15', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-06 00:49:17', '2024-11-06 00:50:23'),
+(14, 'PERIODE_NOVEMBER_2024_672b37352fb62', '2024-10-15', '2024-11-15', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-06 08:30:29', '2024-11-06 08:30:29');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `periode_paie_histories`
+--
+
+CREATE TABLE `periode_paie_histories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `periode_paie_id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `details` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `permissions`
+--
+
+CREATE TABLE `permissions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `permissions`
+--
+
+INSERT INTO `permissions` (`id`, `name`, `description`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'manage forms', NULL, 'web', '2024-10-30 09:04:06', '2024-10-30 09:04:06'),
+(2, 'manage fields', NULL, 'web', '2024-10-30 09:04:07', '2024-10-30 09:04:07'),
+(3, 'manage actions', NULL, 'web', '2024-10-30 09:04:07', '2024-10-30 09:04:07');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `posts`
+--
+
+CREATE TABLE `posts` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `is_published` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `profiles`
+--
+
+CREATE TABLE `profiles` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `bio` text DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `birth_date` date DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reports`
+--
+
+CREATE TABLE `reports` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `guard_name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `roles`
+--
+
+INSERT INTO `roles` (`id`, `name`, `description`, `guard_name`, `created_at`, `updated_at`) VALUES
+(1, 'Admin', NULL, 'web', '2024-10-30 09:04:07', '2024-10-30 09:04:07'),
+(2, 'Responsable', NULL, 'web', '2024-10-30 09:04:07', '2024-10-30 09:04:07'),
+(3, 'Gestionnaire', NULL, 'web', '2024-10-30 09:04:07', '2024-10-30 09:04:07');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `role_has_permissions`
+--
+
+CREATE TABLE `role_has_permissions` (
+  `permission_id` bigint(20) UNSIGNED NOT NULL,
+  `role_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `role_has_permissions`
+--
+
+INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+(1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `settings`
+--
+
+CREATE TABLE `settings` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `key` varchar(255) NOT NULL,
+  `value` text DEFAULT NULL,
+  `theme` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `telescope_entries`
+--
+
+CREATE TABLE `telescope_entries` (
+  `sequence` bigint(20) UNSIGNED NOT NULL,
+  `uuid` char(36) NOT NULL,
+  `batch_id` char(36) NOT NULL,
+  `family_hash` varchar(255) DEFAULT NULL,
+  `should_display_on_index` tinyint(1) NOT NULL DEFAULT 1,
+  `type` varchar(20) NOT NULL,
+  `content` longtext NOT NULL,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `telescope_entries`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `telescope_monitoring`
+--
+
+CREATE TABLE `telescope_monitoring` (
+  `tag` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tickets`
+--
+
+CREATE TABLE `tickets` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `subject` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `status` enum('open','in_progress','closed') NOT NULL DEFAULT 'open',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `traitements_paie`
+--
+
+CREATE TABLE `traitements_paie` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `reference` varchar(255) NOT NULL,
+  `gestionnaire_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `client_id` bigint(20) UNSIGNED NOT NULL,
+  `periode_paie_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `teledec_urssaf` date DEFAULT NULL,
+  `est_verrouille` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `nb_bulletins_file` varchar(255) DEFAULT NULL,
+  `maj_fiche_para_file` varchar(255) DEFAULT NULL,
+  `reception_variables_file` varchar(255) DEFAULT NULL,
+  `preparation_bp_file` varchar(255) DEFAULT NULL,
+  `validation_bp_client_file` varchar(255) DEFAULT NULL,
+  `preparation_envoi_dsn_file` varchar(255) DEFAULT NULL,
+  `accuses_dsn_file` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
+--
+
+CREATE TABLE `users` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `role_id` bigint(20) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `avatar`, `remember_token`, `created_at`, `updated_at`, `is_active`, `role_id`) VALUES
+(1, 'Admin User', 'admin@xal.com', NULL, '$2y$10$AZ6hXu8O.JqCxaLPe0gmMObgKjTd/cqzCAfDc72sWmzbDZWtLyHjm', NULL, '4dAp75f3RmzexddodfnHPuF7qhIzLoyzsc4KPKiQo8gJtJ8wWmFZD2yy98tr', '2024-10-30 09:07:52', '2024-10-30 09:07:52', 1, NULL),
+(2, 'Responsable User', 'responsable@xal.com', NULL, '$2y$10$sGJvQaNKNEvCPWbOLaWM6ugqz2dsuajw6Kp14/UiODwyVw/vfU96e', NULL, 'EIYTwlN618BlI1NVC5ZRvv8KZS20LXqLCeObo9gTULWmbQ0v7ZeofqVCIht4', '2024-10-30 09:07:53', '2024-10-30 09:07:53', 1, NULL),
+(3, 'Gestionnaire User', 'gestionnaire@xal.com', NULL, '$2y$10$GRAlrv82KWRMybiDPC//hOZ3dRiChuTg1MRnhxr0Qnwnxuj0ieoL.', NULL, 'MiH69jDFVbNU8xpxGRIaL8IPEqCbPrT8NnjCgelp9JZ0z1kaskjIp5UHIxZx', '2024-10-30 09:07:53', '2024-10-30 09:07:53', 1, NULL),
+(4, 'Regular User', 'user@xal.com', NULL, '$2y$10$Ym4BybeEhocmXMLczEpXzOesacSvKnvOAdjCgvcpcDQz70I8dP2yO', NULL, NULL, '2024-10-30 09:07:53', '2024-10-30 09:07:53', 1, NULL),
+(5, 'Inactive User', 'inactive@xal.com', NULL, '$2y$10$Z6ESTcGDBQIxuR6tFhEynO2RNuvZl2GlLI7LbJyfjOJGs0X2By9X2', NULL, NULL, '2024-10-30 09:07:54', '2024-10-30 09:07:54', 0, NULL),
+(6, 'User One', 'user1@xal.com', NULL, '$2y$10$7CVabmoxumtZNocoppwpke9N4vwTLqs4CJTJZFARIt/g93jPFKuzi', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(7, 'User Two', 'user2@xal.com', NULL, '$2y$10$uyJOD0uCEbwTbSei8/bIrOx9EFTmQTbKQ1KvCQZLzL.PDkExBd2sW', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(8, 'User Three', 'user3@xal.com', NULL, '$2y$10$bAEzISfmWo2UCVpRqoQDIOkwxn4GzHa.EnnCdkYq5mMVFOFZoCSF6', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 0, NULL),
+(9, 'User Four', 'user4@xal.com', NULL, '$2y$10$wXK7A1eAPqxiHjdgZ4iS4OyczICMfWKdmMAK1lKOKiZ1HhNs3Lrqu', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(10, 'User Five', 'user5@xal.com', NULL, '$2y$10$l2rz2Od8M79la5WaB9m5a.sAjLZqTZGBm8hS58gECc55gcmgnvCXq', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(11, 'User Six', 'user6@xal.com', NULL, '$2y$10$u8MgVVL4Y6ZPhbuI5QIeHuWeaygVP86UwwheuvhakwAFBMCweshFm', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(12, 'User Seven', 'user7@xal.com', NULL, '$2y$10$OOopNsvx98vgVCKPT485Ve8.UIu6ca/by7EV9KuKprPR3ML6sZwPu', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 0, NULL),
+(13, 'User Eight', 'user8@xal.com', NULL, '$2y$10$j/L26.63WYo3JHTcqqxF4OhdviH4hjjWQJsrq0asGIp8vgJkw9BHK', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(14, 'User Nine', 'user9@xal.com', NULL, '$2y$10$ek6tDprNSMap78zWtdV9eOou19MUCCGliwCNUhZpgkMWCLUNvPt32', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 1, NULL),
+(15, 'User Ten', 'user10@xal.com', NULL, '$2y$10$EB2HrKDcjuCirxuYzQkLy.3Vh6HCAbh8ph2HYmLs1DmJFEjk1lrAO', NULL, NULL, '2024-10-30 09:07:57', '2024-10-30 09:07:57', 0, NULL),
+(17, 'BENI', 'beni@gmail.com', NULL, '$2y$10$GbO0qx9mvzQShOLyF0nNhetj.KRZq6wnr1nQuZCSsQlg13LUclk3i', NULL, NULL, '2024-11-03 22:59:29', '2024-11-03 22:59:29', 1, NULL);
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `attachments`
+--
+ALTER TABLE `attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `attachments_post_id_foreign` (`post_id`);
+
+--
+-- Index pour la table `audits`
+--
+ALTER TABLE `audits`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `audits_auditable_type_auditable_id_index` (`auditable_type`,`auditable_id`),
+  ADD KEY `audits_user_id_user_type_index` (`user_id`,`user_type`);
+
+--
+-- Index pour la table `clients`
+--
+ALTER TABLE `clients`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `clients_responsable_paie_id_foreign` (`responsable_paie_id`),
+  ADD KEY `clients_gestionnaire_principal_id_foreign` (`gestionnaire_principal_id`),
+  ADD KEY `clients_convention_collective_id_foreign` (`convention_collective_id`),
+  ADD KEY `clients_parent_client_id_foreign` (`parent_client_id`),
+  ADD KEY `clients_binome_id_foreign` (`binome_id`),
+  ADD KEY `clients_portfolio_cabinet_id_foreign` (`portfolio_cabinet_id`);
+
+--
+-- Index pour la table `client_histories`
+--
+ALTER TABLE `client_histories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `client_histories_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `comments_post_id_foreign` (`post_id`),
+  ADD KEY `comments_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contacts_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `convention_collective`
+--
+ALTER TABLE `convention_collective`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `convention_collective_idcc_unique` (`idcc`),
+  ADD UNIQUE KEY `convention_collective_name_unique` (`name`);
+
+--
+-- Index pour la table `documents`
+--
+ALTER TABLE `documents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `documents_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Index pour la table `files`
+--
+ALTER TABLE `files`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `files_traitement_paie_id_foreign` (`traitement_paie_id`);
+
+--
+-- Index pour la table `mails`
+--
+ALTER TABLE `mails`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mails_expediteur_id_foreign` (`expediteur_id`),
+  ADD KEY `mails_recepteur_id_foreign` (`recepteur_id`);
+
+--
+-- Index pour la table `materials`
+--
+ALTER TABLE `materials`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `materials_client_id_foreign` (`client_id`),
+  ADD KEY `materials_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `material_histories`
+--
+ALTER TABLE `material_histories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `material_histories_material_id_foreign` (`material_id`),
+  ADD KEY `material_histories_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `model_has_permissions`
+--
+ALTER TABLE `model_has_permissions`
+  ADD PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
+  ADD KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`);
+
+--
+-- Index pour la table `model_has_roles`
+--
+ALTER TABLE `model_has_roles`
+  ADD PRIMARY KEY (`role_id`,`model_id`,`model_type`),
+  ADD KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`);
+
+--
+-- Index pour la table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `notifications_user_id_foreign` (`user_id`),
+  ADD KEY `notifications_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Index pour la table `periodes_paie`
+--
+ALTER TABLE `periodes_paie`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `periodes_paie_reference_unique` (`reference`),
+  ADD KEY `periodes_paie_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `periode_paie_histories`
+--
+ALTER TABLE `periode_paie_histories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `periode_paie_histories_periode_paie_id_foreign` (`periode_paie_id`),
+  ADD KEY `periode_paie_histories_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `permissions`
+--
+ALTER TABLE `permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`);
+
+--
+-- Index pour la table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+
+--
+-- Index pour la table `posts`
+--
+ALTER TABLE `posts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `posts_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `profiles_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `reports`
+--
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reports_user_id_foreign` (`user_id`);
+
+--
+-- Index pour la table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`);
+
+--
+-- Index pour la table `role_has_permissions`
+--
+ALTER TABLE `role_has_permissions`
+  ADD PRIMARY KEY (`permission_id`,`role_id`),
+  ADD KEY `role_has_permissions_role_id_foreign` (`role_id`);
+
+--
+-- Index pour la table `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `settings_key_unique` (`key`);
+
+--
+-- Index pour la table `telescope_entries`
+--
+ALTER TABLE `telescope_entries`
+  ADD PRIMARY KEY (`sequence`),
+  ADD UNIQUE KEY `telescope_entries_uuid_unique` (`uuid`),
+  ADD KEY `telescope_entries_batch_id_index` (`batch_id`),
+  ADD KEY `telescope_entries_family_hash_index` (`family_hash`),
+  ADD KEY `telescope_entries_created_at_index` (`created_at`),
+  ADD KEY `telescope_entries_type_should_display_on_index_index` (`type`,`should_display_on_index`);
+
+--
+-- Index pour la table `telescope_entries_tags`
+--
+ALTER TABLE `telescope_entries_tags`
+  ADD PRIMARY KEY (`entry_uuid`,`tag`),
+  ADD KEY `telescope_entries_tags_tag_index` (`tag`);
+
+--
+-- Index pour la table `telescope_monitoring`
+--
+ALTER TABLE `telescope_monitoring`
+  ADD PRIMARY KEY (`tag`);
+
+--
+-- Index pour la table `tickets`
+--
+ALTER TABLE `tickets`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tickets_user_id_foreign` (`user_id`),
+  ADD KEY `tickets_client_id_foreign` (`client_id`);
+
+--
+-- Index pour la table `traitements_paie`
+--
+ALTER TABLE `traitements_paie`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `traitements_paie_reference_unique` (`reference`),
+  ADD KEY `traitements_paie_gestionnaire_id_foreign` (`gestionnaire_id`),
+  ADD KEY `traitements_paie_client_id_foreign` (`client_id`),
+  ADD KEY `traitements_paie_periode_paie_id_foreign` (`periode_paie_id`);
+
+--
+-- Index pour la table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `attachments`
+--
+ALTER TABLE `attachments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `audits`
+--
+ALTER TABLE `audits`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+
+--
+-- AUTO_INCREMENT pour la table `clients`
+--
+ALTER TABLE `clients`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
+-- AUTO_INCREMENT pour la table `client_histories`
+--
+ALTER TABLE `client_histories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `convention_collective`
+--
+ALTER TABLE `convention_collective`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pour la table `documents`
+--
+ALTER TABLE `documents`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `files`
+--
+ALTER TABLE `files`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `mails`
+--
+ALTER TABLE `mails`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `materials`
+--
+ALTER TABLE `materials`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `material_histories`
+--
+ALTER TABLE `material_histories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT pour la table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `periodes_paie`
+--
+ALTER TABLE `periodes_paie`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT pour la table `periode_paie_histories`
+--
+ALTER TABLE `periode_paie_histories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `permissions`
+--
+ALTER TABLE `permissions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pour la table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `posts`
+--
+ALTER TABLE `posts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `profiles`
+--
+ALTER TABLE `profiles`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `reports`
+--
+ALTER TABLE `reports`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pour la table `settings`
+--
+ALTER TABLE `settings`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `telescope_entries`
+--
+ALTER TABLE `telescope_entries`
+  MODIFY `sequence` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25433;
+
+--
+-- AUTO_INCREMENT pour la table `tickets`
+--
+ALTER TABLE `tickets`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `traitements_paie`
+--
+ALTER TABLE `traitements_paie`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `attachments`
+--
+ALTER TABLE `attachments`
+  ADD CONSTRAINT `attachments_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `clients`
+--
+ALTER TABLE `clients`
+  ADD CONSTRAINT `clients_binome_id_foreign` FOREIGN KEY (`binome_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `clients_convention_collective_id_foreign` FOREIGN KEY (`convention_collective_id`) REFERENCES `convention_collective` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `clients_gestionnaire_principal_id_foreign` FOREIGN KEY (`gestionnaire_principal_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `clients_parent_client_id_foreign` FOREIGN KEY (`parent_client_id`) REFERENCES `clients` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `clients_portfolio_cabinet_id_foreign` FOREIGN KEY (`portfolio_cabinet_id`) REFERENCES `clients` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `clients_responsable_paie_id_foreign` FOREIGN KEY (`responsable_paie_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `client_histories`
+--
+ALTER TABLE `client_histories`
+  ADD CONSTRAINT `client_histories_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `comments_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `comments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD CONSTRAINT `contacts_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `documents`
+--
+ALTER TABLE `documents`
+  ADD CONSTRAINT `documents_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `files`
+--
+ALTER TABLE `files`
+  ADD CONSTRAINT `files_traitement_paie_id_foreign` FOREIGN KEY (`traitement_paie_id`) REFERENCES `traitements_paie` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `mails`
+--
+ALTER TABLE `mails`
+  ADD CONSTRAINT `mails_expediteur_id_foreign` FOREIGN KEY (`expediteur_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `mails_recepteur_id_foreign` FOREIGN KEY (`recepteur_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `materials`
+--
+ALTER TABLE `materials`
+  ADD CONSTRAINT `materials_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `materials_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `material_histories`
+--
+ALTER TABLE `material_histories`
+  ADD CONSTRAINT `material_histories_material_id_foreign` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `material_histories_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `model_has_permissions`
+--
+ALTER TABLE `model_has_permissions`
+  ADD CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `model_has_roles`
+--
+ALTER TABLE `model_has_roles`
+  ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `periodes_paie`
+--
+ALTER TABLE `periodes_paie`
+  ADD CONSTRAINT `periodes_paie_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `periode_paie_histories`
+--
+ALTER TABLE `periode_paie_histories`
+  ADD CONSTRAINT `periode_paie_histories_periode_paie_id_foreign` FOREIGN KEY (`periode_paie_id`) REFERENCES `periodes_paie` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `periode_paie_histories_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `posts`
+--
+ALTER TABLE `posts`
+  ADD CONSTRAINT `posts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD CONSTRAINT `profiles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `reports`
+--
+ALTER TABLE `reports`
+  ADD CONSTRAINT `reports_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `role_has_permissions`
+--
+ALTER TABLE `role_has_permissions`
+  ADD CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `telescope_entries_tags`
+--
+ALTER TABLE `telescope_entries_tags`
+  ADD CONSTRAINT `telescope_entries_tags_entry_uuid_foreign` FOREIGN KEY (`entry_uuid`) REFERENCES `telescope_entries` (`uuid`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `tickets`
+--
+ALTER TABLE `tickets`
+  ADD CONSTRAINT `tickets_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tickets_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `traitements_paie`
+--
+ALTER TABLE `traitements_paie`
+  ADD CONSTRAINT `traitements_paie_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `traitements_paie_gestionnaire_id_foreign` FOREIGN KEY (`gestionnaire_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `traitements_paie_periode_paie_id_foreign` FOREIGN KEY (`periode_paie_id`) REFERENCES `periodes_paie` (`id`) ON DELETE SET NULL;
+COMMIT;
+
