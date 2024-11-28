@@ -13,11 +13,12 @@ use App\Models\TraitementPaie;
 use App\Models\MaterialHistory;
 use App\Models\PeriodePaieHistory;
 use Illuminate\Support\Facades\Log;
-
 use App\Exports\ClientPeriodeExport;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\FicheClientActionNotification;
+use Illuminate\Support\Facades\Notification;
 
 class PeriodePaieService
 {
@@ -88,8 +89,9 @@ class PeriodePaieService
         $ficheClient->update($data);
 
         Log::info('Fiche client mise à jour avec succès : ', ['fiche_client_id' => $ficheClient->id]);
+        // Envoyer la notification
+        $ficheClient->notifyAction('updated', 'Fiche client mise à jour');
     }
-
 
     public function updatePeriodePaie(PeriodePaie $periodePaie, array $data)
     {

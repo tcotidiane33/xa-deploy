@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Notifications\FicheClientActionNotification;
+use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
 
 
@@ -24,12 +26,33 @@ class FicheClient extends Model
         'preparation_envoie_dsn', 'accuses_dsn'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($ficheClient) {
+            $ficheClient->notifyAction('created', 'Fiche client créée');
+        });
+
+        static::updated(function ($ficheClient) {
+            $ficheClient->notifyAction('updated', 'Fiche client mise à jour');
+        });
+    }
+
+    public function notifyAction($action, $details)
+    {
+        $responsable = $this->client->responsablePaie;
+        $gestionnaire = $this->client->gestionnairePrincipal;
+
+        Notification::send([$responsable, $gestionnaire], new FicheClientActionNotification($this, $action, $details));
+    }
+
     public function periodePaie()
     {
         return $this->belongsTo(PeriodePaie::class);
     }
 
-    
+
     public function traitementPaie()
     {
         return $this->hasOne(TraitementPaie::class, 'client_id', 'client_id')

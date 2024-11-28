@@ -9,7 +9,6 @@ use Illuminate\Queue\SerializesModels;
 class ClientAcknowledgementMail extends Mailable
 {
     use Queueable, SerializesModels;
-
     public $manager;
     public $client;
 

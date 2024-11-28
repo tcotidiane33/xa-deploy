@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Mail\ClientNotification;
+use App\Mail\ClientManagerChangeMail;
+use App\Mail\ClientAcknowledgementMail;
 use Illuminate\Support\Facades\Mail;
 
 class Client extends Model implements AuditableContract
@@ -100,6 +102,11 @@ class Client extends Model implements AuditableContract
             $traitementPaie->reference = 'TP-' . Str::upper(Str::random(8));
         });
 
+        static::creating(function ($client) {
+            $client->reference = 'CL-' . Str::upper(Str::random(8));
+        });
+
+
         static::created(function ($client) {
             $client->sendAcknowledgementEmail();
         });
@@ -116,14 +123,16 @@ class Client extends Model implements AuditableContract
         $gestionnaire = $this->gestionnairePrincipal;
         $client = $this;
 
-        $data = [
-            'managerName' => $gestionnaire->name,
-            'managerEmail' => $gestionnaire->email,
-            'clientName' => $client->name,
-            'clientEmail' => $client->email,
-        ];
+        Mail::to($client->email)->cc($gestionnaire->email)->send(new ClientAcknowledgementMail($gestionnaire, $client));
 
-        Mail::to($data['managerEmail'])->send(new ClientNotification($data));
+        // $data = [
+        //     'managerName' => $gestionnaire->name,
+        //     'managerEmail' => $gestionnaire->email,
+        //     'clientName' => $client->name,
+        //     'clientEmail' => $client->email,
+        // ];
+
+        // Mail::to($data['managerEmail'])->send(new ClientNotification($data));
     }
 
     public function sendManagerChangeEmail()
@@ -131,15 +140,18 @@ class Client extends Model implements AuditableContract
         $gestionnaire = $this->gestionnairePrincipal;
         $client = $this;
 
-        $data = [
-            'managerName' => $gestionnaire->name,
-            'managerEmail' => $gestionnaire->email,
-            'managerPhone' => $gestionnaire->phone ?? 'N/A', // Assurez-vous que cette clé est définie
-            'clientName' => $client->name,
-            'clientEmail' => $client->email,
-        ];
+        Mail::to($client->email)->cc($gestionnaire->email)->send(new ClientManagerChangeMail($gestionnaire, $client));
 
-        Mail::to($data['managerEmail'])->send(new ClientNotification($data));
+
+        // $data = [
+        //     'managerName' => $gestionnaire->name,
+        //     'managerEmail' => $gestionnaire->email,
+        //     'managerPhone' => $gestionnaire->phone ?? 'N/A', // Assurez-vous que cette clé est définie
+        //     'clientName' => $client->name,
+        //     'clientEmail' => $client->email,
+        // ];
+
+        // Mail::to($data['managerEmail'])->send(new ClientNotification($data));
     }
     // protected function sendEmail($serviceId, $templateId, $data)
     // {
