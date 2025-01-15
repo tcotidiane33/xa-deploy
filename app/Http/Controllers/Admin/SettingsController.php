@@ -28,6 +28,8 @@ class SettingsController extends Controller
             'default_user_role' => 'required|exists:roles,id',
             'items_per_page' => 'required|integer|min:5|max:100',
             'allow_user_registration' => 'boolean',
+            'theme' => 'required|string|in:light,dark',
+            'notifications' => 'boolean',
         ]);
 
         foreach ($validatedData as $key => $value) {
@@ -38,53 +40,5 @@ class SettingsController extends Controller
         }
 
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, string $id)
-    // {
-    //     //
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

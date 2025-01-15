@@ -89,9 +89,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fiches-clients/create', [FicheClientController::class, 'create'])->name('fiches-clients.create');
     Route::post('fiches-clients', [FicheClientController::class, 'store'])->name('fiches-clients.store');
     // Route::get('fiches-clients/{fiches_client}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
-    Route::get('fiches-clients/{ficheClient}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
+    // Route::get('fiches-clients/{ficheClient}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
     Route::get('fiches-clients/{fiches_client}/edit', [FicheClientController::class, 'edit'])->name('fiches-clients.edit');
-    Route::put('fiches-clients/{fiches_client}', [FicheClientController::class, 'update'])->name('fiches-clients.update');
+    // Route::put('fiches-clients/{fiches_client}', [FicheClientController::class, 'update'])->name('fiches-clients.update');
     Route::delete('fiches-clients/{fiches_client}', [FicheClientController::class, 'destroy'])->name('fiches-clients.destroy');
     Route::post('fiches-clients/migrate', [FicheClientController::class, 'migrateToNewPeriod'])->name('fiches-clients.migrate');
 
@@ -109,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/traitements-paie/{traitementPaie}', [TraitementPaieController::class, 'update'])->name('traitements-paie.update');
     Route::delete('/traitements-paie/{traitementPaie}', [TraitementPaieController::class, 'destroy'])->name('traitements-paie.destroy');
     Route::get('/historique', [TraitementPaieController::class, 'historique'])->name('traitements-paie.historique');
-    Route::post('/traitements-paie/store', [TraitementPaieController::class, 'store'])->name('traitements-paie.store');
+    // Route::post('/traitements-paie/store', [TraitementPaieController::class, 'store'])->name('traitements-paie.store');
     Route::post('/traitements-paie/store-partial', [TraitementPaieController::class, 'storePartial'])->name('traitements-paie.storePartial');
     Route::post('/traitements-paie/cancel', [TraitementPaieController::class, 'cancel'])->name('traitements-paie.cancel');
 
@@ -149,8 +149,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::post('clients/{client}/detach-gestionnaire', [ClientController::class, 'detachGestionnaire'])->name('clients.detachGestionnaire');
 
     // Paramètres et gestion des rôles et permissions
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
-    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
 
     //période paie
     Route::post('/periodes-paie/{periodePaie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');

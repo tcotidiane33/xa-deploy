@@ -53,7 +53,7 @@ class HomeController extends Controller
         $ticketsEnCours = Ticket::where('statut', 'en cours')->count();
 
         // Récupérer les utilisateurs connectés
-        $connectedUsers = User::where('is_active', true)->get();
+        $connectedUsers = User::where('is_active', true)->paginate(5);
 
         // Récupérer les logs d'audit récents
         $recentAudits = \OwenIt\Auditing\Models\Audit::latest()->take(10)->get();

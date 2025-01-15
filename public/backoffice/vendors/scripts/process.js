@@ -25,7 +25,7 @@ function animateValue(id, start, end, duration) {
         if (current == end) {
             clearInterval(timer);
             setTimeout(function() {
-                $(".pre-loader").fadeOut(500);
+                $(".pre-loader").fadeOut(100);
             }, 500);
         }
     }, stepTime);
@@ -33,7 +33,7 @@ function animateValue(id, start, end, duration) {
 
 // Fading Out Loadbar when Finished
 setTimeout(function() {
-    $(".pre-loader").fadeOut(500);
+    $(".pre-loader").fadeOut(100);
 }, time);
 
 
