@@ -64,33 +64,53 @@ class UpdateFicheClient extends Component
             'notes' => $this->notes,
         ]);
 
-        if ($this->reception_variables_file) {
-            $this->ficheClient->reception_variables_file = $this->reception_variables_file->store('files');
-        }
-        if ($this->preparation_bp_file) {
-            $this->ficheClient->preparation_bp_file = $this->preparation_bp_file->store('files');
-        }
-        if ($this->validation_bp_client_file) {
-            $this->ficheClient->validation_bp_client_file = $this->validation_bp_client_file->store('files');
-        }
-        if ($this->preparation_envoie_dsn_file) {
-            $this->ficheClient->preparation_envoie_dsn_file = $this->preparation_envoie_dsn_file->store('files');
-        }
-        if ($this->accuses_dsn_file) {
-            $this->ficheClient->accuses_dsn_file = $this->accuses_dsn_file->store('files');
-        }
-        if ($this->nb_bulletins_file) {
-            $this->ficheClient->nb_bulletins_file = $this->nb_bulletins_file->store('files');
-        }
-        if ($this->maj_fiche_para_file) {
-            $this->ficheClient->maj_fiche_para_file = $this->maj_fiche_para_file->store('files');
+        // if ($this->reception_variables_file) {
+        //     $this->ficheClient->reception_variables_file = $this->reception_variables_file->store('files');
+        // }
+        // if ($this->preparation_bp_file) {
+        //     $this->ficheClient->preparation_bp_file = $this->preparation_bp_file->store('files');
+        // }
+        // if ($this->validation_bp_client_file) {
+        //     $this->ficheClient->validation_bp_client_file = $this->validation_bp_client_file->store('files');
+        // }
+        // if ($this->preparation_envoie_dsn_file) {
+        //     $this->ficheClient->preparation_envoie_dsn_file = $this->preparation_envoie_dsn_file->store('files');
+        // }
+        // if ($this->accuses_dsn_file) {
+        //     $this->ficheClient->accuses_dsn_file = $this->accuses_dsn_file->store('files');
+        // }
+        // if ($this->nb_bulletins_file) {
+        //     $this->ficheClient->nb_bulletins_file = $this->nb_bulletins_file->store('files');
+        // }
+        // if ($this->maj_fiche_para_file) {
+        //     $this->ficheClient->maj_fiche_para_file = $this->maj_fiche_para_file->store('files');
+        // }
+
+        // $this->ficheClient->save();
+
+        // session()->flash('success', 'Fiche client mise à jour avec succès.');
+
+        $fileFields = [
+            'reception_variables_file',
+            'preparation_bp_file',
+            'validation_bp_client_file',
+            'preparation_envoie_dsn_file',
+            'accuses_dsn_file',
+            'nb_bulletins_file',
+            'maj_fiche_para_file'
+        ];
+
+        foreach ($fileFields as $field) {
+            if ($this->$field) {
+                $path = $this->$field->store('public/fiches_clients');
+                $this->ficheClient->$field = str_replace('public/', 'storage/', $path);
+            }
         }
 
         $this->ficheClient->save();
 
         session()->flash('success', 'Fiche client mise à jour avec succès.');
     }
-
     public function render()
     {
         return view('livewire.update-fiche-client');

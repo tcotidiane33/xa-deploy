@@ -1,0 +1,42 @@
+/* // le css flowbite d'un theme light */
+/* // le css flowbite d'un theme light */
+
+/* Styles personnalisés pour le thème light */
+body {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.navbar a {
+    color: #212529;
+}
+
+.sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+}
+
+.sidebar a {
+    color: #212529;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-body {
+    color: #212529;
+}
+
+/* Ajoutez d'autres styles personnalisés pour le thème light ici */

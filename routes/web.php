@@ -149,8 +149,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::post('clients/{client}/detach-gestionnaire', [ClientController::class, 'detachGestionnaire'])->name('clients.detachGestionnaire');
 
     // Paramètres et gestion des rôles et permissions
-    Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
-    Route::put('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
     //période paie
     Route::post('/periodes-paie/{periodePaie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');

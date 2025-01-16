@@ -2,9 +2,9 @@
 
     <div class="brand-logo">
         <a href="#">
-            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo.svg') }}" alt=""
+            <img src="{{ asset('backoffice/vendors/images/deskapp-logo.svg') }}" alt=""
                 class="dark-logo" />
-            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo-white.svg') }}" alt=""
+            <img src="{{ asset('backoffice/vendors/images/deskapp-logo-white.svg') }}" alt=""
                 class="light-logo" />
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
@@ -48,7 +48,7 @@
                         <span class="micon bi bi-box-seam"></span><span class="mtext">Matériels</span>
                     </a>
                 </li>
-                <!-- Convention -->
+                <!-- Conention -->
                 <li>
                     <a href="{{ route('convention-collectives.index') }}" class="dropdown-toggle no-arrow">
                         <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Conventions <br>
@@ -129,7 +129,7 @@
     </div>
 </div>
 
-<script src="{{ asset('js/app.js') }}"></script>
+{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 <script>
     // Inclure les scripts JavaScript ici
     document.addEventListener('DOMContentLoaded', function() {
@@ -153,6 +153,9 @@
                 submenu.style.display = dropdown.classList.contains('active') ? 'block' :
                     'none';
             });
+            // toggle.addEventListener('click', function() {
+            //     submenu.classList.toggle('open');
+            // });
 
             submenu.addEventListener('click', function(event) {
                 event.stopPropagation();

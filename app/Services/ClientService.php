@@ -5,6 +5,7 @@ use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ClientsExport;
@@ -45,6 +46,19 @@ class ClientService
             ->groupBy('year')
             ->orderBy('year', 'asc')
             ->get();
+    }
+    public function getClientsStatusData()
+
+    {
+
+        // Implement the logic to get clients status data
+
+        return Client::select('status', DB::raw('count(*) as total'))
+
+            ->groupBy('status')
+
+            ->get();
+
     }
 
     public function getTopConventionsData()

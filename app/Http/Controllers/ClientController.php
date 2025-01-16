@@ -35,35 +35,38 @@ class ClientController extends Controller
     {
         $this->clientService = $clientService;
     }
-    public function index(Request $request)
-{
-    $clients = $this->clientService->getClients($request)->paginate(10); // Utilisez la pagination ici
-    $clientGrowthData = $this->clientService->getClientGrowthData();
-    $clientGrowthLabels = $clientGrowthData->pluck('year'); // Obtenez les labels de croissance des clients
-    $topConventionsData = $this->clientService->getTopConventionsData();
-    $topConventionsLabels = $topConventionsData->pluck('convention_collective_id'); // Obtenez les labels des conventions collectives
-    $clientsByManagerData = $this->clientService->getClientsByManagerData();
-    $clientsByManagerLabels = $clientsByManagerData->pluck('gestionnaire_principal_id'); // Obtenez les labels des gestionnaires principaux
-    $tickets = Ticket::latest()->take(5)->get(); 
-    $posts = Post::latest()->take(5)->get(); 
+       public function index(Request $request)
+    {
+        $clients = $this->clientService->getClients($request)->paginate(10); // Utilisez la pagination ici
+        $clientsCount = Client::count(); // Exemple de données
+        $clientGrowthData = $this->clientService->getClientGrowthData();
+        $clientGrowthLabels = $clientGrowthData->pluck('year'); // Obtenez les labels de croissance des clients
+        $topConventionsData = $this->clientService->getTopConventionsData();
+        $topConventionsLabels = $topConventionsData->pluck('convention_collective_id'); // Obtenez les labels des conventions collectives
+        $clientsByManagerData = $this->clientService->getClientsByManagerData();
+        $clientsByManagerLabels = $clientsByManagerData->pluck('gestionnaire_principal_id'); // Obtenez les labels des gestionnaires principaux
+        $clientsStatusData = $this->clientService->getClientsStatusData(); // Ajoutez cette ligne pour récupérer les données de statut des clients
+        $tickets = Ticket::latest()->take(5)->get();
+        $posts = Post::latest()->take(5)->get();
 
+        // Récupérer les cabinets portefeuilles pour le filtre
+        $portfolioCabinets = Client::where('is_cabinet', true)->get();
 
-    // Récupérer les cabinets portefeuilles pour le filtre
-    $portfolioCabinets = Client::where('is_cabinet', true)->get();
-
-    return view('clients.index', compact(
-        'clients',
-        'tickets',
-        'posts',
-        'clientGrowthData',
-        'clientGrowthLabels',
-        'topConventionsData',
-        'topConventionsLabels',
-        'clientsByManagerData',
-        'clientsByManagerLabels',
-        'portfolioCabinets' // Passez la variable à la vue
-    ));
-}
+        return view('clients.index', compact(
+            'clients',
+            'tickets',
+            'posts',
+            'clientGrowthData',
+            'clientGrowthLabels',
+            'topConventionsData',
+            'topConventionsLabels',
+            'clientsByManagerData',
+            'clientsByManagerLabels',
+            'portfolioCabinets',
+            'clientsCount',
+            'clientsStatusData' // Passez la variable à la vue
+        ));
+    }
 
 
     public function create()
@@ -169,10 +172,10 @@ class ClientController extends Controller
     {
         $result = $this->clientService->validateStep($request, $step);
 
-        if ($result['success']) {
+        if ($result->passes()) {
             return response()->json(['success' => true]);
         } else {
-            return response()->json(['errors' => $result['errors']], 422);
+            return response()->json(['errors' => $result->errors()], 422);
         }
     }
 

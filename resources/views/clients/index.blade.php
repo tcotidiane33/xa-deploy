@@ -67,47 +67,51 @@
                     </div>
 
                     <div class="">
-                        <div class="overflow-x-auto">
+                        <div class=" text-gray-900">
                             <table id="clientsTable" class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>
                                         <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable Paie</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gestionnaire Principal</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Convention Collective</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saisie Variables</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Forme Saisie</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Formation Saisie</th>
-                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début Prestation</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable Paie</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gestionnaire Principal</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CC</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saisie Variables</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Forme Saisie</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formation Saisie</th>
+                                        <th scope="col" class="px-1 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Début Prestation</th>
                                         <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($clients as $client)
                                         <tr class="border-b border-gray-200">
-                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->name }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->responsablePaie->name ?? 'N/A' }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->gestionnairePrincipal->name ?? 'N/A' }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->conventionCollective->name ?? 'N/A' }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">
+                                            <td class="px-1 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->name }}</td>
+                                            <td class="px-1 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->responsablePaie->name ?? 'N/A' }}</td>
+                                            <td class="px-1 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->gestionnairePrincipal->name ?? 'N/A' }}</td>
+                                            <td class="px-1 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->conventionCollective->name ?? 'N/A' }}</td>
+                                            <td class="px-1 py-1 whitespace-nowrap border-b border-gray-200">
                                                 @if($client->saisie_variables)
                                                     <i class="fa fa-check text-green-500"></i> Oui
                                                 @else
                                                     <i class="fa fa-times text-red-500"></i> Non
                                                 @endif
                                             </td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">
+                                            <td class="px-1 py-1 whitespace-nowrap border-r border-gray-200">
                                                 @if($client->client_forme_saisie)
                                                     <i class="fa fa-check text-green-500"></i> Oui
                                                 @else
                                                     <i class="fa fa-times text-red-500"></i> Non
                                                 @endif
                                             </td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">{{ $client->date_formation_saisie }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">{{ $client->date_debut_prestation }}</td>
-                                            <td class="px-2 py-1 whitespace-nowrap">
-                                                <a href="{{ route('clients.show', $client->id) }}" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Voir</a>
-                                                <a href="{{ route('clients.edit', $client->id) }}" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Modifier</a>
+                                            <td class="px-1 py-1 whitespace-nowrap border-r border-gray-200">{{ \Carbon\Carbon::parse($client->date_formation_saisie)->format('d/m/Y') }}</td>
+                                            <td class="px-1 py-1 whitespace-nowrap border-r border-gray-200">{{ \Carbon\Carbon::parse($client->date_debut_prestation)->format('d/m/Y') }}</td>
+                                            <td class="px-3 py-1 whitespace-nowrap">
+                                                <a href="{{ route('clients.show', $client->id) }}" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-1 py-2 text-center me-2 mb-2">
+                                                    <i class="fa fa-eye"></i> Voir
+                                                </a>
+                                                <a href="{{ route('clients.edit', $client->id) }}" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-1 py-2 text-center me-2 mb-2">
+                                                    <i class="fa fa-edit"></i> Modifier
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -127,7 +131,7 @@
 
     <hr>
     <div class="container mt-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {{-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold mb-4">Répartition des clients par statut</h3>
                 <div id="clientStatusChart"></div>
@@ -147,7 +151,7 @@
         <div class="bg-white rounded-lg shadow p-6 mb-8">
             <h3 class="text-lg font-semibold mb-4">Répartition des clients par gestionnaire principal</h3>
             <div id="clientsByManagerChart"></div>
-        </div>
+        </div> --}}
     </div>
 
 @endsection
@@ -170,7 +174,8 @@
                 "info": true,
                 "autoWidth": false,
                 "responsive": true,
-                "scrollX": true, // Enable horizontal scrolling
+                // "scrollX": true,
+                "overflow": true,
                 "language": {
                     "lengthMenu": "Afficher _MENU_ enregistrements par page",
                     "zeroRecords": "Aucun enregistrement trouvé",
@@ -188,112 +193,5 @@
             });
         });
     </script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          // Graphique de répartition des clients par statut
-          var clientStatusOptions = {
-              series: [{
-                  data: [
-                      {{ $clients->where('status', 'actif')->count() }},
-                      {{ $clients->where('status', 'inactif')->count() }}
-                  ]
-              }],
-              chart: {
-                  type: 'pie',
-                  height: 350
-              },
-              labels: ['Actif', 'Inactif'],
-              responsive: [{
-                  breakpoint: 480,
-                  options: {
-                      chart: {
-                          width: 200
-                      },
-                      legend: {
-                          position: 'bottom'
-                      }
-                  }
-              }]
-          };
-          var clientStatusChart = new ApexCharts(document.querySelector("#clientStatusChart"),
-              clientStatusOptions);
-          clientStatusChart.render();
 
-          // Graphique d'évolution du nombre de clients
-          var clientGrowthOptions = {
-              series: [{
-                  name: 'Nombre de clients',
-                  data: @json($clientGrowthData)
-              }],
-              chart: {
-                  height: 350,
-                  type: 'line',
-              },
-              xaxis: {
-                  categories: @json($clientGrowthLabels)
-              },
-              yaxis: {
-                  title: {
-                      text: 'Nombre de clients'
-                  }
-              }
-          };
-          var clientGrowthChart = new ApexCharts(document.querySelector("#clientGrowthChart"),
-              clientGrowthOptions);
-          clientGrowthChart.render();
-
-          // Graphique des top 5 conventions collectives
-          var topConventionsOptions = {
-              series: [{
-                  data: @json($topConventionsData)
-              }],
-              chart: {
-                  type: 'bar',
-                  height: 350
-              },
-              plotOptions: {
-                  bar: {
-                      borderRadius: 4,
-                      horizontal: true,
-                  }
-              },
-              dataLabels: {
-                  enabled: false
-              },
-              xaxis: {
-                  categories: @json($topConventionsLabels)
-              }
-          };
-          var topConventionsChart = new ApexCharts(document.querySelector("#topConventionsChart"),
-              topConventionsOptions);
-          topConventionsChart.render();
-
-          // Graphique de répartition des clients par gestionnaire principal
-          var clientsByManagerOptions = {
-              series: [{
-                  data: @json($clientsByManagerData)
-              }],
-              chart: {
-                  type: 'bar',
-                  height: 350
-              },
-              plotOptions: {
-                  bar: {
-                      borderRadius: 4,
-                      horizontal: true,
-                  }
-              },
-              dataLabels: {
-                  enabled: false
-              },
-              xaxis: {
-                  categories: @json($clientsByManagerLabels)
-              }
-          };
-          var clientsByManagerChart = new ApexCharts(document.querySelector("#clientsByManagerChart"),
-              clientsByManagerOptions);
-          clientsByManagerChart.render();
-      });
-  </script>
 @endpush

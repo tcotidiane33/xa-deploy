@@ -22,23 +22,31 @@
                     <th scope="col" class="px-1 py-0">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+                      <tbody>
                 @foreach ($fichesClients as $ficheClient)
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td class="border-purple-800 font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center "><span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300">{{ $ficheClient->client->name ?? 'N/A' }}</span></td>
-                    <td class="border-purple-800 font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center "><span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{{ $ficheClient->periodePaie->reference ?? 'N/A' }}</span></td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->reception_variables_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->reception_variables_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->preparation_bp_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->preparation_bp_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->validation_bp_client_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->validation_bp_client_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->preparation_envoie_dsn_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->preparation_envoie_dsn_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->accuses_dsn_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->accuses_dsn_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->nb_bulletins_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->nb_bulletins_file ?? 'N/A' }}</td>
-                    <td class="border-purple-800 text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center  {{ $ficheClient->maj_fiche_para_file ? 'bg-green-100' : 'bg-gray-100' }}">{{ $ficheClient->maj_fiche_para_file ?? 'N/A' }}</td>
+                    <td class="border-purple-800 font-medium tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">
+                        <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-pink-900 dark:text-pink-300">{{ $ficheClient->client->name ?? 'N/A' }}</span>
+                    </td>
+                    <td class="border-purple-800 font-medium tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">
+                        <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{{ $ficheClient->periodePaie->reference ?? 'N/A' }}</span>
+                    </td>
+                    @foreach (['reception_variables_file', 'preparation_bp_file', 'validation_bp_client_file', 'preparation_envoie_dsn_file', 'accuses_dsn_file', 'nb_bulletins_file', 'maj_fiche_para_file'] as $fileField)
+                    <td class="border-purple-800 text-xl font-medium tracking-tight leading-none text-gray-900 md:text-xl lg:text-xl dark:text-white p-0 m-0 text-center {{ $ficheClient->$fileField ? 'bg-green-100' : 'bg-gray-100' }}">
+                        @if ($ficheClient->$fileField)
+                            <a href="{{ asset('storage/' . $ficheClient->$fileField) }}" download class="text-green-500">
+                                <i class="fas fa-file-download"></i>
+                            </a>
+                        @else
+                            <i class="fas fa-times-circle text-red-500"></i>
+                        @endif
+                    </td>
+                    @endforeach
                     <td class="p-0 m-0 flex space-x-2">
-                        <button onclick="openPopup({{ $ficheClient->id }})" class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-1 py-1 text-center ">Mettre à jour</button>
+                        <button onclick="openPopup({{ $ficheClient->id }})" class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-1 py-1 text-center">Mettre à jour</button>
                     </td>
                 </tr>
-            @endforeach
+                @endforeach
             </tbody>
         </table>
         <div class="mt-4">

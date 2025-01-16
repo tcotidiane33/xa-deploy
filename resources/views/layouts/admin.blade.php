@@ -18,14 +18,12 @@
     <link rel="icon" type="image/png" sizes="16x16"
         href="{{ asset('/backoffice/vendors/images/logo-icon.png') }}" />
 
+            <!-- Autres balises head -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!--{{-- <script src="{{ @asset('vendor/larapex-charts/apexcharts.js') }}"></script> --}}-->
-
-    <!-- jQuery -->
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
@@ -39,8 +37,8 @@
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('/backoffice/vendors/styles/core.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('/backoffice/vendors/styles/icon-font.min.css') }}" />
-    <link rel="stylesheet" type="text/css"
-        href="{{ asset('/backoffice/src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" />
+    {{-- <link rel="stylesheet" type="text/css"
+        href="{{ asset('/backoffice/src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" /> --}}
     <link rel="stylesheet" type="text/css"
         href="{{ asset('/backoffice/src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('/backoffice/vendors/styles/style.css') }}" />
@@ -83,7 +81,7 @@
 
     <!-- Styles -->
     @if ($theme == 'dark')
-        <link href="{{ asset('css/dark-theme.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/dark-theme.css') }}" rel="stylesheet">
         <style>
             body {
                 /* background: url('assets/mp.svg') center/cover fixed; */
@@ -92,7 +90,7 @@
             }
         </style>
     @else
-        <link href="{{ asset('css/light-theme.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/css/light-theme.css') }}" rel="stylesheet">
         <style>
             body {
                 /* background: url('assets/mp.svg') center/cover fixed; */

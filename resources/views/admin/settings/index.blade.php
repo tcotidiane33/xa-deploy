@@ -5,7 +5,7 @@
 @section('content')
     <div class="container mx-auto p-4">
         <h1 class="text-3xl font-bold mb-6">Paramètres de l'Application</h1>
-        <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+        <form method="POST" action="{{ route('settings.update') }}" class="space-y-6">
             @csrf
             @method('PUT')
 
