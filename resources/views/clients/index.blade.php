@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="main-content">
-        <div class="container mx-auto px-4 py-8">
+        <div class="container mx-auto ">
             <div class="row">
                 <form action="{{ route('clients.index') }}" method="GET" class="mb-4">
                     <div class="grid grid-cols-6 md:grid-cols-6 gap-4">
@@ -58,7 +58,7 @@
                 </form>
 
                 <!-- Liste des clients -->
-                <div class="bg-white rounded-lg shadow p-6 overflow-x-auto shadow-md sm:rounded-lg">
+                <div class="bg-white rounded-lg shadow p-2 overflow-x-auto shadow-md sm:rounded-lg">
                     <h2 class="text-xl font-bold mb-4">{{ __('Liste des clients') }}</h2>
                     <div class="mb-4">
                         <a href="{{ route('clients.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -66,39 +66,55 @@
                         </a>
                     </div>
 
-                    <table id="clientsTable" class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable Paie</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gestionnaire Principal</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Convention Collective</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saisie Variables</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Forme Saisie</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Formation Saisie</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début Prestation</th>
-                                <th scope="col" class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($clients as $client)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->responsablePaie->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->gestionnairePrincipal->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->conventionCollective->name ?? 'N/A' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->saisie_variables }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->client_forme_saisie }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->date_formation_saisie }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $client->date_debut_prestation }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="{{ route('clients.show', $client->id) }}" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Voir</a>
-                                        <a href="{{ route('clients.edit', $client->id) }}" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Modifier</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="">
+                        <div class="overflow-x-auto">
+                            <table id="clientsTable" class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable Paie</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gestionnaire Principal</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Convention Collective</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saisie Variables</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Forme Saisie</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Formation Saisie</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Début Prestation</th>
+                                        <th scope="col" class="px-2 py-1 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach ($clients as $client)
+                                        <tr class="border-b border-gray-200">
+                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->name }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->responsablePaie->name ?? 'N/A' }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->gestionnairePrincipal->name ?? 'N/A' }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">{{ $client->conventionCollective->name ?? 'N/A' }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-b border-gray-200">
+                                                @if($client->saisie_variables)
+                                                    <i class="fa fa-check text-green-500"></i> Oui
+                                                @else
+                                                    <i class="fa fa-times text-red-500"></i> Non
+                                                @endif
+                                            </td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">
+                                                @if($client->client_forme_saisie)
+                                                    <i class="fa fa-check text-green-500"></i> Oui
+                                                @else
+                                                    <i class="fa fa-times text-red-500"></i> Non
+                                                @endif
+                                            </td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">{{ $client->date_formation_saisie }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap border-r border-gray-200">{{ $client->date_debut_prestation }}</td>
+                                            <td class="px-2 py-1 whitespace-nowrap">
+                                                <a href="{{ route('clients.show', $client->id) }}" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Voir</a>
+                                                <a href="{{ route('clients.edit', $client->id) }}" class="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Modifier</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     <!-- Pagination -->
                     <div class="mt-4">
@@ -140,7 +156,7 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
@@ -154,6 +170,7 @@
                 "info": true,
                 "autoWidth": false,
                 "responsive": true,
+                "scrollX": true, // Enable horizontal scrolling
                 "language": {
                     "lengthMenu": "Afficher _MENU_ enregistrements par page",
                     "zeroRecords": "Aucun enregistrement trouvé",

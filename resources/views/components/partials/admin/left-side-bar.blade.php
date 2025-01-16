@@ -2,8 +2,10 @@
 
     <div class="brand-logo">
         <a href="#">
-            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
-            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
+            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo.svg') }}" alt=""
+                class="dark-logo" />
+            <img src="{{ asset('xv/public/backoffice/vendors/images/deskapp-logo-white.svg') }}" alt=""
+                class="light-logo" />
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>
@@ -46,7 +48,7 @@
                         <span class="micon bi bi-box-seam"></span><span class="mtext">Matériels</span>
                     </a>
                 </li>
-                 <!-- Convention -->
+                <!-- Convention -->
                 <li>
                     <a href="{{ route('convention-collectives.index') }}" class="dropdown-toggle no-arrow">
                         <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Conventions <br>
@@ -149,7 +151,7 @@
             toggle.addEventListener('click', function() {
                 dropdown.classList.toggle('active');
                 submenu.style.display = dropdown.classList.contains('active') ? 'block' :
-                'none';
+                    'none';
             });
 
             submenu.addEventListener('click', function(event) {
