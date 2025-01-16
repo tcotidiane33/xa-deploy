@@ -99,7 +99,24 @@
                                     <td class="px-6 py-4 modifiable">{{ $ficheClient->preparation_envoie_dsn ?? 'N/A' }}</td>
                                     <td class="px-6 py-4 modifiable">{{ $ficheClient->accuses_dsn ?? 'N/A' }}</td>
                                     {{-- <td class="px-6 py-4 modifiable">{{ $ficheClient->teledec_urssaf ?? 'N/A' }}</td> --}}
-                                    <td class="px-6 py-4 modifiable">{{ $ficheClient->notes ?? 'N/A' }}</td>
+                                                                        <td class="px-6 py-4 modifiable">
+                                        @if ($ficheClient && $ficheClient->notes)
+                                            @php
+                                                $notes = explode("\n", $ficheClient->notes);
+                                                $recentNotes = array_slice($notes, -3);
+                                            @endphp
+                                            <div id="notes-{{ $ficheClient->id }}">
+                                                @foreach ($recentNotes as $note)
+                                                    <p>{{ $note }}</p>
+                                                @endforeach
+                                            </div>
+                                            @if (count($notes) > 3)
+                                                <a href="#" onclick="showAllNotes({{ $ficheClient->id }})">Voir plus</a>
+                                            @endif
+                                        @else
+                                            N/A
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">
                                         @if ($ficheClient)
                                             <button class="btn btn-primary" onclick="openEditPopup({{ $ficheClient->id }})">Modifier</button>
@@ -184,7 +201,7 @@
         function closeEditPopup() {
             document.getElementById('editPopup').style.display = 'none';
         }
-        
+
         function openCreatePopup(clientId) {
             document.getElementById('createForm').action = `{{ url('fiches-clients') }}`;
             document.getElementById('client_id').value = clientId;
@@ -219,5 +236,24 @@
                 ]
             });
         });
+    </script>
+
+        <script>
+        function showAllNotes(ficheClientId) {
+            var notesDiv = document.getElementById('notes-' + ficheClientId);
+            var allNotes = @json($ficheClient->notes);
+            var notesArray = allNotes.split("\n");
+
+            notesDiv.innerHTML = '';
+            notesArray.forEach(function(note) {
+                var p = document.createElement('p');
+                p.textContent = note;
+                notesDiv.appendChild(p);
+            });
+
+            // Remove the "Voir plus" link after showing all notes
+            var voirPlusLink = event.target;
+            voirPlusLink.parentNode.removeChild(voirPlusLink);
+        }
     </script>
 @endpush

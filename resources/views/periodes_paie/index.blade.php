@@ -234,8 +234,12 @@
                     <tbody>
                         @foreach ($fichesClients as $fiche)
                             <tr class="bg-white justify-center border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td class="text-sm font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">{{ $fiche->client->name }}</td>
-                                <td class="text-sm font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">{{ $fiche->client->gestionnairePrincipal->name ?? 'N/A' }}
+                                <td
+                                    class="text-sm font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">
+                                    {{ $fiche->client->name }}</td>
+                                <td
+                                    class="text-sm font-extrabold tracking-tight leading-none text-gray-900 dark:text-white p-0 m-0 text-center">
+                                    {{ $fiche->client->gestionnairePrincipal->name ?? 'N/A' }}
                                 </td>
                                 <td
                                     class="text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center {{ $fiche->client->nb_bulletins ? 'bg-purple-500 text-white' : '' }}">
@@ -266,7 +270,24 @@
                                     {{ $fiche->accuses_dsn ? $fiche->accuses_dsn->format('d/m') : 'N/A' }}
                                 </td>
                                 {{-- <td class="px-6 py-4">{{ $fiche->teledec_urssaf ? \Carbon\Carbon::parse($fiche->teledec_urssaf)->format('d/m') : 'N/A' }}</td> --}}
-                                <td class="p-1 m-0 text-center whitespace-pre">{{ $fiche->notes ?? 'N/A' }}</td>
+                                <td class="p-1 m-0 text-center whitespace-pre">
+                                    @if ($fiche->notes)
+                                        @php
+                                            $notes = explode("\n", $fiche->notes);
+                                            $recentNotes = array_slice($notes, -3);
+                                        @endphp
+                                        <div id="notes-{{ $fiche->id }}">
+                                            @foreach ($recentNotes as $note)
+                                            <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">{{ $note }}</span>
+                                            @endforeach
+                                        </div>
+                                        @if (count($notes) > 3)
+                                            <a href="#" onclick="showAllNotes({{ $fiche->id }})" class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Voir plus</a>
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
                                 <td class="p-0 m-0 text-center flex ">
                                     <button onclick="openPopup({{ $fiche->id }})"
                                         class="bg-blue-500 hover:bg-cyan-700 text-white font-bold m-1 p-1 rounded">
@@ -361,7 +382,7 @@
                 .then(data => {
                     document.getElementById('fiche_client_id').value = ficheClientId;
                     document.getElementById('updateForm').action =
-                    `/periodes-paie/update-fiche-client/${ficheClientId}`;
+                        `/periodes-paie/update-fiche-client/${ficheClientId}`;
                     document.getElementById('reception_variables').value = data.reception_variables;
                     document.getElementById('preparation_bp').value = data.preparation_bp;
                     document.getElementById('validation_bp_client').value = data.validation_bp_client;
@@ -389,7 +410,7 @@
 </script> --}}
 
     <hr>
-    <tbody>
+    {{-- <tbody>
         @foreach ($periodesPaie as $periode)
             <tr class="border-b hover:bg-gray-50">
                 <td class="px-4 py-3 text-gray-700">
@@ -465,7 +486,7 @@
                 </td>
             </tr>
         @endforeach
-    </tbody>
+    </tbody> --}}
 
     {{-- <script>
         function openEditPopup(ficheClientId) {
@@ -591,11 +612,11 @@
 @endsection
 
 @push('scripts')
-     <!-- DataTables CSS -->
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
-     {{--<!-- jQuery -->
+    {{-- <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->--}}
+    <!-- DataTables JS --> --}}
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -603,7 +624,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-   <script>
+    <script>
         $(document).ready(function() {
             $('#calendar').fullCalendar({
                 events: [
@@ -641,11 +662,30 @@
                 ]
             });
         });
-    </script> 
+    </script>
+
+    <script>
+        function showAllNotes(ficheId) {
+            var notesDiv = document.getElementById('notes-' + ficheId);
+            var allNotes = @json($fiche->notes);
+            var notesArray = allNotes.split("\n");
+
+            notesDiv.innerHTML = '';
+            notesArray.forEach(function(note) {
+                var p = document.createElement('p');
+                p.textContent = note;
+                notesDiv.appendChild(p);
+            });
+
+            // Remove the "Voir plus" link after showing all notes
+            var voirPlusLink = event.target;
+            voirPlusLink.parentNode.removeChild(voirPlusLink);
+        }
+    </script>
 @endpush
 
 
-{{-- $client = Client::find(4); 
+{{-- $client = Client::find(4);
 
 $periodePaie = new PeriodePaie();
 $periodePaie->reference = 'PERIODE_DECEMBER_2024';

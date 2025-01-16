@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('client_id')->nullable()->constrained()->onDelete('cascade');
             // $table->enum('type', ['traitement_debut', 'echeance_proche', 'variables_attendues']);
             $table->string('type', 255)->change(); // Augmenter la longueur de la colonne `type`
-
             $table->text('message')->nullable()->change();
             $table->boolean('is_read')->default(false);
             $table->timestamps();
