@@ -270,19 +270,38 @@
                                     {{ $fiche->accuses_dsn ? $fiche->accuses_dsn->format('d/m') : 'N/A' }}
                                 </td>
                                 {{-- <td class="px-6 py-4">{{ $fiche->teledec_urssaf ? \Carbon\Carbon::parse($fiche->teledec_urssaf)->format('d/m') : 'N/A' }}</td> --}}
-                                <td class="p-1 m-0 text-center whitespace-pre">
+                                <td
+                                    class="text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-3 m-0 text-center">
                                     @if ($fiche->notes)
                                         @php
                                             $notes = explode("\n", $fiche->notes);
                                             $recentNotes = array_slice($notes, -3);
                                         @endphp
-                                        <div id="notes-{{ $fiche->id }}">
+                                        <div id="notes-{{ $fiche->id }}"
+                                            class="inline-flex items-center justify-center w-full">
                                             @foreach ($recentNotes as $note)
-                                            <span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">{{ $note }}</span>
+                                                <span
+                                                    class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">{{ $note }}</span>
+                                                <div class="inline-flex items-center justify-center w-full">
+                                                    <hr
+                                                        class="w-24 h-1 my-8 bg-gray-200 border-0 rounded dark:bg-gray-700">
+                                                    <div
+                                                        class="absolute px-4 -translate-x-1/2 bg-white left-1/2 dark:bg-gray-900">
+                                                        <svg class="w-4 h-4 text-gray-700 dark:text-gray-300"
+                                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                            fill="currentColor" viewBox="0 0 18 14">
+                                                            <path
+                                                                d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             @endforeach
                                         </div>
                                         @if (count($notes) > 3)
-                                            <a href="#" onclick="showAllNotes({{ $fiche->id }})" class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Voir plus</a>
+                                            <a href="#"
+                                                onclick="showAllNotes(event, {{ $fiche->id }}, @json($notes))"
+                                                class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Voir
+                                                plus</a>
                                         @endif
                                     @else
                                         N/A
@@ -665,16 +684,16 @@
     </script>
 
     <script>
-        function showAllNotes(ficheId) {
+        function showAllNotes(event, ficheId, notes) {
+            event.preventDefault();
             var notesDiv = document.getElementById('notes-' + ficheId);
-            var allNotes = @json($fiche->notes);
-            var notesArray = allNotes.split("\n");
-
             notesDiv.innerHTML = '';
-            notesArray.forEach(function(note) {
-                var p = document.createElement('p');
-                p.textContent = note;
-                notesDiv.appendChild(p);
+            notes.forEach(function(note) {
+                var span = document.createElement('span');
+                span.className =
+                    'bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300';
+                span.textContent = note;
+                notesDiv.appendChild(span);
             });
 
             // Remove the "Voir plus" link after showing all notes
