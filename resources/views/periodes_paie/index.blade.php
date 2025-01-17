@@ -228,7 +228,7 @@
                             <th scope="col" class="px-6 py-3">Accusés DSN</th>
                             {{-- <th scope="col" class="px-6 py-3">TELEDEC URSSAF</th> --}}
                             <th scope="col" class="px-6 py-3">NOTES</th>
-                            <th scope="col" class="px-6 py-3">Actions</th>
+                            <th scope="col" class="px-6 py-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -242,7 +242,7 @@
                                     {{ $fiche->client->gestionnairePrincipal->name ?? 'N/A' }}
                                 </td>
                                 <td
-                                    class="text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center {{ $fiche->client->nb_bulletins ? 'bg-purple-500 text-white' : '' }}">
+                                    class="text-xl font-extrabold tracking-tight leading-none text-gray-900 md:text-xl lg:text-1xl dark:text-white p-0 m-0 text-center {{ $fiche->client->nb_bulletins ? 'bg-blue-500 text-white' : '' }}">
                                     {{ $fiche->client->nb_bulletins ?? 'N/A' }}
                                 </td>
                                 <td
@@ -280,36 +280,30 @@
                                         <div id="notes-{{ $fiche->id }}"
                                             class="inline-flex items-center justify-center w-full">
                                             @foreach ($recentNotes as $note)
-                                                <span
-                                                    class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">{{ $note }}</span>
+                                                <div class="flex items-start m-0 justify-start">
+                                                    <div class="bg-pink-100 text-pink-800 text-xs font-medium px-4 py-2 rounded-lg shadow-md dark:bg-pink-900 dark:text-pink-300">
+                                                        {{ $note }}
+                                                    </div>
+                                                </div>
                                                 <div class="inline-flex items-center justify-center w-full">
                                                     <hr
-                                                        class="w-24 h-1 my-8 bg-gray-200 border-0 rounded dark:bg-gray-700">
-                                                    <div
-                                                        class="absolute px-4 -translate-x-1/2 bg-white left-1/2 dark:bg-gray-900">
-                                                        <svg class="w-4 h-4 text-gray-700 dark:text-gray-300"
-                                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                            fill="currentColor" viewBox="0 0 18 14">
-                                                            <path
-                                                                d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" />
-                                                        </svg>
-                                                    </div>
+                                                        class="w-8 h-1 my-8 bg-gray-200 border-0 rounded dark:bg-gray-700">
                                                 </div>
                                             @endforeach
                                         </div>
-                                        @if (count($notes) > 3)
+                                        {{-- @if (count($notes) > 3)
                                             <a href="#"
                                                 onclick="showAllNotes(event, {{ $fiche->id }}, @json($notes))"
-                                                class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Voir
+                                                class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Voir
                                                 plus</a>
-                                        @endif
+                                        @endif --}}
                                     @else
                                         N/A
                                     @endif
                                 </td>
-                                <td class="p-0 m-0 text-center flex ">
+                                <td class=" flex text-center items-center justify-center">
                                     <button onclick="openPopup({{ $fiche->id }})"
-                                        class="bg-blue-500 hover:bg-cyan-700 text-white font-bold m-1 p-1 rounded">
+                                        class="bg-blue-500 hover:bg-cyan-700 text-white font-bold m-1 p-1 rounded mx-auto">
                                         Mettre à jour
                                     </button>
                                     {{-- <form action="{{ route('fiches-clients.destroy', $fiche->id) }}" method="POST" style="display:inline;">
@@ -328,7 +322,9 @@
             </div>
         </div>
         <hr>
-        <div id="calendar"></div> <!-- Ajout du calendrier ici -->
+
+            <div id="calendar" class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center  items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"></div>
+         <!-- Ajout du calendrier ici -->
     </div>
 
     <!-- Popup de mise à jour -->
@@ -643,7 +639,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-    <script>
+      
+        <script>
         $(document).ready(function() {
             $('#calendar').fullCalendar({
                 events: [
@@ -652,48 +649,66 @@
                             title: '{{ $periode->reference }}',
                             start: '{{ $periode->debut }}',
                             end: '{{ $periode->fin }}',
-                            color: '{{ $periode->validee ? '#ff0000' : '#00ff00' }}' // Rouge pour les périodes clôturées, vert pour les autres
+                            color: '{{ $periode->validee ? '#ff0000' : '#00ff00' }}', // Rouge pour les périodes clôturées, vert pour les autres
+                            description: 'Période de paie: {{ $periode->reference }}'
                         },
                     @endforeach
                     @foreach ($fichesClients as $fiche)
                         {
                             title: '{{ $fiche->client->name }} - Réception variables',
                             start: '{{ $fiche->reception_variables }}',
-                            color: '#ff9f89'
+                            color: '#ff9f89',
+                            description: 'Réception des variables pour {{ $fiche->client->name }}'
                         }, {
                             title: '{{ $fiche->client->name }} - Préparation BP',
                             start: '{{ $fiche->preparation_bp }}',
-                            color: '#f39c12'
+                            color: '#f39c12',
+                            description: 'Préparation BP pour {{ $fiche->client->name }}'
                         }, {
                             title: '{{ $fiche->client->name }} - Validation BP client',
                             start: '{{ $fiche->validation_bp_client }}',
-                            color: '#00c0ef'
+                            color: '#00c0ef',
+                            description: 'Validation BP client pour {{ $fiche->client->name }}'
                         }, {
                             title: '{{ $fiche->client->name }} - Préparation et envoie DSN',
                             start: '{{ $fiche->preparation_envoie_dsn }}',
-                            color: '#3c8dbc'
+                            color: '#3c8dbc',
+                            description: 'Préparation et envoie DSN pour {{ $fiche->client->name }}'
                         }, {
                             title: '{{ $fiche->client->name }} - Accusés DSN',
                             start: '{{ $fiche->accuses_dsn }}',
-                            color: '#00a65a'
+                            color: '#00a65a',
+                            description: 'Accusés DSN pour {{ $fiche->client->name }}'
                         },
                     @endforeach
-                ]
+                ],
+                eventRender: function(event, element) {
+                    element.attr('title', event.description);
+                    element.tooltip({
+                        placement: 'top',
+                        trigger: 'hover',
+                        container: 'body'
+                    });
+                }
             });
         });
     </script>
 
-    <script>
+        <script>
         function showAllNotes(event, ficheId, notes) {
             event.preventDefault();
             var notesDiv = document.getElementById('notes-' + ficheId);
             notesDiv.innerHTML = '';
             notes.forEach(function(note) {
-                var span = document.createElement('span');
-                span.className =
-                    'bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300';
-                span.textContent = note;
-                notesDiv.appendChild(span);
+                var noteContainer = document.createElement('div');
+                noteContainer.className = 'flex items-start m-0';
+
+                var noteDiv = document.createElement('div');
+                noteDiv.className = 'bg-pink-100 text-pink-800 text-xs font-medium px-4 py-2 rounded-lg shadow-md dark:bg-pink-900 dark:text-pink-300 border border-pink-300';
+                noteDiv.textContent = note;
+
+                noteContainer.appendChild(noteDiv);
+                notesDiv.appendChild(noteContainer);
             });
 
             // Remove the "Voir plus" link after showing all notes

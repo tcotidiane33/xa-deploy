@@ -20,7 +20,10 @@
 
             <!-- Autres balises head -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    {{-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -201,7 +204,7 @@
                         <span class="sr-only">Create Période de Paie</span>
                     </a>
                     <a href="{{ route('traitements-paie.create') }}"
-                        class="flex items-center justify-center w-12 h-12 text-white bg-teal-600 rounded-full hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 focus:outline-none dark:focus:ring-teal-800">
+                        class="flex items-center justify-center w-12 h-12 text-white bg-pink-400 rounded-full hover:bg-pink-700 focus:ring-4 focus:ring-teal-300 focus:outline-none dark:focus:ring-teal-800">
                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                             viewBox="0 0 20 20">
                             <path
