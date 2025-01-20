@@ -30,7 +30,7 @@
         </div>
 
         <!-- Deuxième colonne -->
-        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
+ !::        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
             <h2 class="text-xl font-bold ">Clients rattachés</h2>
             <form action="{{ route('admin.users.attachClient', $user) }}" method="POST">
                 @csrf
@@ -96,7 +96,7 @@
         </div>
 
         <!-- Troisième colonne -->
-        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
+ !::        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
             <h2 class="text-xl font-bold ">Transférer des clients</h2>
             <form action="{{ route('admin.users.transferClients', $user) }}" method="POST">
                 @csrf
