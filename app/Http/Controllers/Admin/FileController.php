@@ -15,6 +15,7 @@ class FileController extends Controller
     protected $restrictedTables = [
         'users','documents','attachments','material_histories', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions','migrations','failed_jobs', 'permissions', 'password_reset_tokens', 'personal_access_tokens', 'profiles', 'settings', 'permission_role'
     ];
+    private $allowedTables = ['users', 'periodes_paie', 'fiches_clients', 'traitements_paie']; // Ajoutez ici les tables autorisées
 
     public function index()
     {
@@ -27,7 +28,10 @@ class FileController extends Controller
             return !in_array($tableName, $this->restrictedTables);
         });
 
-        return view('admin.files.index', compact('tableNames'));
+        return view('admin.files.index', [
+            'tableNames' => $tableNames,
+            'allowedTables' => $this->allowedTables
+        ]);
     }
 
     public function downloadTemplate(Request $request)
@@ -61,16 +65,10 @@ class FileController extends Controller
         ]);
 
         $tableName = $request->input('table_name');
-        $tables = Schema::getAllTables();
-        $tableNames = array_map('current', $tables);
 
-        // Filtrer les tables restreintes
-        $tableNames = array_filter($tableNames, function ($tableName) {
-            return !in_array($tableName, $this->restrictedTables);
-        });
-
-        if (!in_array($tableName, $tableNames)) {
-            return redirect()->back()->with('error', 'La table spécifiée n\'existe pas ou est restreinte.');
+        // Vérifier si la table est autorisée
+        if (!in_array($tableName, $this->allowedTables)) {
+            return redirect()->back()->with('error', 'La table spécifiée n\'est pas autorisée.');
         }
 
         try {

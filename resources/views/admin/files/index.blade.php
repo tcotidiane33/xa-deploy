@@ -14,7 +14,7 @@
                             <div class="form-group">
                                 <label for="table_name">Nom de la table</label>
                                 <select name="table_name" id="table_name" class="form-control" required>
-                                    @foreach($tableNames as $tableName)
+                                    @foreach($allowedTables as $tableName)
                                         <option value="{{ $tableName }}">{{ $tableName }}</option>
                                     @endforeach
                                 </select>
