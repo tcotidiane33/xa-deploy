@@ -57,6 +57,8 @@ class FileController extends Controller
         return Excel::download(new TableTemplateExport($columns), "{$tableName}_template.xlsx");
     }
 
+
+    // Fonction pour importer un fichier Excel
     public function uploadExcel(Request $request)
     {
         $request->validate([

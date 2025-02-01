@@ -11,9 +11,9 @@
                     <div class="mb-4">
                         <h2 class="text-xl font-bold mb-4">Télécharger un modèle</h2>
                         <form action="{{ route('admin.files.downloadTemplate') }}" method="GET">
-                            <div class="form-group">
+                            <div class="form-group border-b border-gray-300">
                                 <label for="table_name">Nom de la table</label>
-                                <select name="table_name" id="table_name" class="form-control" required>
+                                <select name="table_name" id="table_name" class="form-control " required>
                                     @foreach($allowedTables as $tableName)
                                         <option value="{{ $tableName }}">{{ $tableName }}</option>
                                     @endforeach
