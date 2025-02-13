@@ -31,6 +31,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::resource('posts', PostController::class);
+    Route::get('/search', [PostController::class, 'search'])->name('search');
     Route::delete('posts/attachments/{attachment}', [PostController::class, 'removeAttachment'])->name('posts.remove-attachment');
 
     // Profile routes
@@ -44,7 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
 
     // Search route
-    Route::get('/search', [ProfileController::class, 'search'])->name('search');
+    // Route::get('/search', [HomeController::class, 'search'])->name('search');
 
     // Resource routes
     Route::resource('users', UserController::class);

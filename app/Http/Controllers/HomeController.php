@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Client;
 use App\Models\TraitementPaie;
 use App\Models\PeriodePaie;
 use App\Models\Ticket;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Client;
 use OwenIt\Auditing\Models\Audit; // Ajoutez cette ligne
-use Carbon\Carbon;
 
 
 class HomeController extends Controller
@@ -82,4 +81,6 @@ class HomeController extends Controller
 
         ));
     }
+
+
 }

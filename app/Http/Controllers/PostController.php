@@ -7,6 +7,19 @@ use App\Models\Post;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Models\Contact;
+use App\Models\Comment;
+use App\Models\Document;
+use App\Models\ConventionCollective;
+use App\Models\Event;
+use App\Models\Material;
+use App\Models\TraitementPaie;
+use App\Models\PeriodePaie;
+use App\Models\User;
+use App\Models\Client;
+use OwenIt\Auditing\Models\Audit;
+use Illuminate\Support\Facades\Schema;
 
 class PostController extends Controller
 {
@@ -14,9 +27,9 @@ class PostController extends Controller
     {
         // $posts = Post::with('user')->latest()->paginate(10);
         $posts = Post::with('user')->latest()->paginate(10);
-        $tickets = Ticket::latest()->take(5)->get(); 
+        $tickets = Ticket::latest()->take(5)->get();
         // $posts = Post::latest()->paginate(10); // Paginer par 10 éléments par page
-        return view('posts.index', compact('posts','tickets'));
+        return view('posts.index', compact('posts', 'tickets'));
     }
 
     public function create()
@@ -120,4 +133,84 @@ class PostController extends Controller
         return view('posts.edit', compact('post'));
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $key = trim($request->get('q'));
+
+        $posts = Post::query()
+            ->where('title', 'like', "%{$key}%")
+            ->orWhere('content', 'like', "%{$key}%")
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $users = User::where('name', 'LIKE', "%{$key}%")
+            ->orWhere('email', 'LIKE', "%{$key}%")
+            ->get();
+
+        $clients = Client::where('name', 'LIKE', "%{$key}%")
+            ->get();
+
+        $attachments = Attachment::where('filename', 'LIKE', "%{$key}%")
+            ->get();
+
+        $audits = Audit::where('event', 'LIKE', "%{$key}%")
+            ->get();
+
+        $contacts = collect(); // Remplacer la requête par une collection vide
+
+        $comments = Comment::where('content', 'LIKE', "%{$key}%")
+            ->get();
+
+        $documents = Document::query();
+        if (Schema::hasColumn('documents', 'title')) {
+            $documents->where('title', 'LIKE', "%{$key}%");
+        }
+        if (Schema::hasColumn('documents', 'content')) {
+            $documents->orWhere('content', 'LIKE', "%{$key}%");
+        }
+        $documents = $documents->get();
+
+        $conventionCollectives = ConventionCollective::where('name', 'LIKE', "%{$key}%")
+            ->get();
+
+        $events = Event::where('title', 'LIKE', "%{$key}%")
+            ->orWhere('start', 'LIKE', "%{$key}%")
+            ->get();
+
+        $materials = Material::where('title', 'LIKE', "%{$key}%")
+            ->get();
+
+        $periodesPaie = PeriodePaie::where('reference', 'LIKE', "%{$key}%")
+            ->get();
+
+        $traitementsPaie = TraitementPaie::where('reference', 'LIKE', "%{$key}%")
+            ->get();
+
+        $recent_posts = Post::query()
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $results = collect([
+            'users' => $users,
+            'clients' => $clients,
+            'attachments' => $attachments,
+            'audits' => $audits,
+            'contacts' => $contacts,
+            'comments' => $comments,
+            'documents' => $documents,
+            'conventionCollectives' => $conventionCollectives,
+            'events' => $events,
+            'materials' => $materials,
+            'periodesPaie' => $periodesPaie,
+            'traitementsPaie' => $traitementsPaie,
+            'key' => $key,
+            'posts' => $posts,
+            'recent_posts' => $recent_posts,
+        ]);
+
+        return view('components.search-results', compact('results', 'query'));
+    }
 }
