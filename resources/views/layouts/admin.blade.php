@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" sizes="16x16"
         href="{{ asset('/backoffice/vendors/images/logo-icon.png') }}" />
 
-            <!-- Autres balises head -->
+    <!-- Autres balises head -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     {{-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> --}}
@@ -120,6 +120,37 @@
             bottom: 50px;
             right: 20px;
         }
+
+        .breadcrumb-container {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .breadcrumb-container nav ol {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-container nav ol li {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-container nav ol li a {
+            color: #4b5563;
+            font-size: 0.875rem;
+            text-decoration: none;
+        }
+
+        .breadcrumb-container nav ol li a:hover {
+            color: #1f2937;
+        }
+
+        .breadcrumb-container nav ol li span {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 
@@ -145,7 +176,52 @@
                 {{ session('error') }}
             </div>
         @endif
+
         <div class="main-container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb-container bg-gray-100 p-0 rounded-full shadow-sm">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="{{ route('dashboard') }}"
+                                class="text-gray-700 hover:text-gray-900 inline-flex items-center ">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                    </path>
+                                </svg>
+                                Dashboard
+                            </a>
+                        </li>
+                        <!-- Dynamic Breadcrumb Links -->
+                        @if (isset($breadcrumbs))
+                            @foreach ($breadcrumbs as $breadcrumb)
+                                <li>
+                                    <div class="flex items-center mt-0">
+                                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        @if (isset($breadcrumb['url']))
+                                            <a href="{{ $breadcrumb['url'] }}"
+                                                class="text-gray-700 hover:text-gray-900 ml-1 md:ml-2 text-sm font-medium">
+                                                {{ $breadcrumb['name'] }}
+                                            </a>
+                                        @else
+                                            <span class="text-gray-500 ml-1 md:ml-2 text-sm font-medium">
+                                                {{ $breadcrumb['name'] }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        @endif
+                    </ol>
+                </nav>
+            </div>
             @yield('content')
         </div>
         <div class="menu-container">
@@ -183,8 +259,8 @@
                     </a>
                     <a href="{{ route('convention-collectives.create') }}"
                         class="flex items-center justify-center w-12 h-12 text-white bg-yellow-600 rounded-full hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 focus:outline-none dark:focus:ring-yellow-800">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 18 20">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 18 20">
                             <path
                                 d="M5 9V4.13a2.96 2.96 0 0 0-1.293.749L.879 7.707A2.96 2.96 0 0 0 .13 9H5Zm11.066-9H9.829a2.98 2.98 0 0 0-2.122.879L7 1.584A.987.987 0 0 0 6.766 2h4.3A3.972 3.972 0 0 1 15 6v10h1.066A1.97 1.97 0 0 0 18 14V2a1.97 1.97 0 0 0-1.934-2Z" />
                             <path
@@ -194,8 +270,8 @@
                     </a>
                     <a href="{{ route('periodes-paie.create') }}"
                         class="flex items-center justify-center w-12 h-12 text-white bg-purple-600 rounded-full hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 focus:outline-none dark:focus:ring-purple-800">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 20 20">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
                             <path
@@ -205,8 +281,8 @@
                     </a>
                     <a href="{{ route('traitements-paie.create') }}"
                         class="flex items-center justify-center w-12 h-12 text-white bg-pink-400 rounded-full hover:bg-pink-700 focus:ring-4 focus:ring-teal-300 focus:outline-none dark:focus:ring-teal-800">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                            viewBox="0 0 20 20">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
                             <path

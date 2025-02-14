@@ -12,7 +12,7 @@ class ClientManagerChangeMail extends Mailable
 
     public $manager;
     public $client;
-    public function __construct($manager)
+    public function __construct($manager, $client)
     {
         $this->manager = $manager;
         $this->client = $client;

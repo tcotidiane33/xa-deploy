@@ -46,15 +46,23 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('roles')->paginate(15);
-        $tickets = Ticket::latest()->take(5)->get(); 
-        $posts = Post::latest()->take(5)->get(); 
-        return view('users.index', compact('users', 'posts','tickets'));
+        $tickets = Ticket::latest()->take(5)->get();
+        $posts = Post::latest()->take(5)->get();
+        $breadcrumbs = [
+            // ['name' => 'Fiches Clients', 'url' => route('dashboard')],
+            ['name' => 'Utilisateurs', 'url' => route('users.index')],
+        ];
+        return view('users.index', compact('users', 'posts','tickets', 'breadcrumbs'));
     }
 
     public function create()
     {
         $roles = Role::all();
-        return view('users.create', compact('roles'));
+        $breadcrumbs = [
+            ['name' => 'Utilisateurs', 'url' => route('users.index')],
+            ['name' => 'Créer un utilisateur', 'url' => route('users.create')],
+        ];
+        return view('users.create', compact('roles', 'breadcrumbs'));
     }
 
     public function store(Request $request)
@@ -86,8 +94,12 @@ class UserController extends Controller
         // Récupérer tous les clients pour permettre l'ajout de nouveaux clients
         $clients = Client::all();
         $users = User::all();
+        $breadcrumbs = [
+            ['name' => 'Utilisateurs', 'url' => route('users.index')],
+            ['name' => 'Voir un utilisateur', 'url' => route('users.create')],
+        ];
 
-        return view('users.show', compact('user', 'clients','users'));
+        return view('users.show', compact('user', 'clients','users', 'breadcrumbs'));
     }
 
 
@@ -96,7 +108,11 @@ class UserController extends Controller
         $roles = Role::all();
         $clients = Client::all();
         $users = User::all(); // Ajoutez cette ligne pour récupérer tous les utilisateurs
-        return view('users.edit', compact('user', 'roles', 'clients', 'users'));
+        $breadcrumbs = [
+            ['name' => 'Utilisateurs', 'url' => route('users.index')],
+            ['name' => 'Modifier un utilisateur', 'url' => route('users.edit')],
+        ];
+        return view('users.edit', compact('user', 'roles', 'clients', 'users', 'breadcrumbs'));
     }
 
     public function update(Request $request, User $user)

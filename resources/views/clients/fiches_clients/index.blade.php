@@ -1,7 +1,35 @@
 @extends('layouts.admin')
 
+@push('styles')
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .notes-container {
+            position: relative;
+        }
+
+        .short-notes {
+            display: inline;
+        }
+
+        .full-notes {
+            display: none;
+        }
+
+        .notes-container.expanded .short-notes {
+            display: none;
+        }
+
+        .notes-container.expanded .full-notes {
+            display: inline;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container mx-auto px-4 py-8">
+
         <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Fiches Clients</h1>
@@ -11,8 +39,7 @@
                 </a>
             </div>
             <div>
-                <form class="" action="{{ route('fiches-clients.migrate') }}"
-                    method="POST"
+                <form class="" action="{{ route('fiches-clients.migrate') }}" method="POST"
                     onsubmit="return confirm('Êtes-vous sûr de vouloir migrer toutes les fiches clients vers la nouvelle période de paie ?');">
                     @csrf
                     <div class="">
@@ -84,39 +111,39 @@
                         <th scope="col" class="px-6 py-3">Validation BP client</th>
                         <th scope="col" class="px-6 py-3">Préparation et envoie DSN</th>
                         <th scope="col" class="px-6 py-3">Accusés DSN</th>
-                        {{-- <th scope="col" class="px-6 py-3">TELEDEC URSSAF</th> --}}
-                        <th scope="col" class="px-26 py-3">NOTES</th>
-                        {{-- <th scope="col" class="px-6 py-3">Actions</th> --}}
+                        <th scope="col" class="px-16 py-3">NOTES</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($fichesClients as $fiche)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <td class="px-6 py-4">{{ $fiche->client->name }}</td>
-                            <td class="px-6 py-4">{{ $fiche->periodePaie->reference }}</td>
-                            <td class="px-6 py-4">
+                    @foreach ($fichesClients as $index => $fiche)
+                        <tr
+                            class="{{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-100' }} border-b dark:bg-gray-800 dark:border-gray-700">
+                            <td class="px-5 py-1">{{ $fiche->client->name }}</td>
+                            <td class="px-5 py-1">{{ $fiche->periodePaie->reference }}</td>
+                            <td class="px-5 py-1">
                                 {{ $fiche->reception_variables ? \Carbon\Carbon::parse($fiche->reception_variables)->format('d/m') : 'N/A' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-5 py-1">
                                 {{ $fiche->preparation_bp ? \Carbon\Carbon::parse($fiche->preparation_bp)->format('d/m') : 'N/A' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-5 py-1">
                                 {{ $fiche->validation_bp_client ? \Carbon\Carbon::parse($fiche->validation_bp_client)->format('d/m') : 'N/A' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-5 py-1">
                                 {{ $fiche->preparation_envoie_dsn ? \Carbon\Carbon::parse($fiche->preparation_envoie_dsn)->format('d/m') : 'N/A' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-5 py-1">
                                 {{ $fiche->accuses_dsn ? \Carbon\Carbon::parse($fiche->accuses_dsn)->format('d/m') : 'N/A' }}
                             </td>
-                            {{-- <td class="px-6 py-4">{{ $fiche->teledec_urssaf ? \Carbon\Carbon::parse($fiche->teledec_urssaf)->format('d/m') : 'N/A' }}</td> --}}
-                            <td class="px-26 py-4">{{ $fiche->notes ?? 'N/A' }}</td>
-                            {{-- <td class="px-6 py-4 flex space-x-2">
-                                <button onclick="openPopup({{ $fiche->id }})"
-                                    class="bg-blue-500 hover:bg-cyan-700 text-white font-bold py-1 px-1 rounded">
-                                    Mettre à jour
-                                </button>
-                            </td> --}}
+                            <td class="px-15 py-1">
+                                <div class="notes-container">
+                                    <span class="short-notes">{{ Str::limit($fiche->notes, 50) }}</span>
+                                    @if (strlen($fiche->notes) > 50)
+                                        <span class="full-notes hidden">{{ $fiche->notes }}</span>
+                                        <button onclick="toggleNotes(this)" class="text-blue-500">Voir plus</button>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -125,18 +152,29 @@
                 {{ $fichesClients->links() }}
             </div>
         </div>
-    </div>
 
-    <!-- Popup de mise à jour -->
-    <div id="updatePopup"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
-        <div class="relative p-6 border w-92 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Ajouter les variables</h3>
-                <livewire:update-fiche-client :ficheClient="$ficheClient" />
+        <!-- Popup de mise à jour -->
+        <div id="updatePopup"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
+            <div class="relative p-6 border w-92 shadow-lg rounded-md bg-white">
+                <div class="mt-3">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Ajouter les variables</h3>
+                    <livewire:update-fiche-client :ficheClient="$ficheClient" />
+                </div>
             </div>
         </div>
+
     </div>
+    {{-- @if (isset($breadcrumbs))
+            <div class="breadcrumb-container bg-gray-100 p-4 shadow-sm">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <!-- Breadcrumb content -->
+                    </ol>
+                </nav>
+            </div>
+        @endif --}}
+
 
     <script>
         function openPopup(ficheClientId) {
@@ -157,6 +195,21 @@
 
         function closePopup() {
             document.getElementById('updatePopup').classList.add('hidden');
+        }
+
+        function showFullNotes(notes) {
+            alert(notes);
+        }
+    </script>
+    <script>
+        function toggleNotes(button) {
+            const container = button.closest('.notes-container');
+            container.classList.toggle('expanded');
+            if (container.classList.contains('expanded')) {
+                button.textContent = 'Voir moins';
+            } else {
+                button.textContent = 'Voir plus';
+            }
         }
     </script>
 @endsection

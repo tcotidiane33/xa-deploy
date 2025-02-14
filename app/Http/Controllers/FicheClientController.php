@@ -35,15 +35,23 @@ class FicheClientController extends Controller
         $ficheClient = new FicheClient(); // Ajoutez cette ligne
           $tickets = Ticket::latest()->take(5)->get();
     $posts = Post::latest()->take(5)->get();
+    $breadcrumbs = [
+        // ['name' => 'Dashboard', 'url' => route('dashboard')],
+        ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
+    ];
 
-        return view('clients.fiches_clients.index', compact('fichesClients', 'clients','tickets','posts', 'periodesPaie', 'ficheClient'));
+        return view('clients.fiches_clients.index', compact('fichesClients', 'clients','tickets','posts', 'periodesPaie', 'breadcrumbs', 'ficheClient'));
     }
 
     public function create()
     {
         $clients = Client::all();
         $periodesPaie = PeriodePaie::all();
-        return view('clients.fiches_clients.create', compact('clients', 'periodesPaie'));
+        $breadcrumbs = [
+            ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
+            ['name' => 'Create Fiches Clients', 'url' => route('fiches-clients.create')],
+        ];
+        return view('clients.fiches_clients.create', compact('clients', 'periodesPaie', 'breadcrumbs'));
     }
 
     public function store(StoreFicheClientRequest $request)
@@ -60,7 +68,11 @@ class FicheClientController extends Controller
     {
         $clients = Client::all();
         $periodesPaie = PeriodePaie::all();
-        return view('clients.fiches_clients.edit', compact('fiches_client', 'clients', 'periodesPaie'));
+        $breadcrumbs = [
+            ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
+            ['name' => 'Edit Fiches Clients', 'url' => route('fiches-clients.edit')],
+        ];
+        return view('clients.fiches_clients.edit', compact('fiches_client', 'clients', 'periodesPaie', 'breadcrumbs'));
     }
 
     public function update(UpdateFicheClientRequest $request, FicheClient $fiches_client)
