@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Ticket;
+use App\Models\Post;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\ClientHistory;
@@ -15,15 +17,10 @@ use App\Models\ConventionCollective;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Mail\ClientManagerChangeMail;
-use App\Models\Ticket;
-use App\Models\Post;
-
 use App\Notifications\RelationUpdated;
 use App\Mail\ClientAcknowledgementMail;
 use App\Notifications\NewClientCreated;
-
 use BayAreaWebPro\MultiStepForms\MultiStepForm;
-
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 
@@ -48,12 +45,17 @@ class ClientController extends Controller
         $clientsStatusData = $this->clientService->getClientsStatusData(); // Ajoutez cette ligne pour récupérer les données de statut des clients
         $tickets = Ticket::latest()->take(5)->get();
         $posts = Post::latest()->take(5)->get();
+        $breadcrumbs = [
+            // ['name' => 'Fiches Clients', 'url' => route('dashboard')],
+            ['name' => 'Tout Les Clients', 'url' => route('clients.index')],
+        ];
 
         // Récupérer les cabinets portefeuilles pour le filtre
         $portfolioCabinets = Client::where('is_cabinet', true)->get();
 
         return view('clients.index', compact(
             'clients',
+            'breadcrumbs',
             'tickets',
             'posts',
             'clientGrowthData',
@@ -72,7 +74,11 @@ class ClientController extends Controller
     public function create()
     {
         Log::info('Début de la méthode create');
-        return view('clients.create');
+        $breadcrumbs = [
+            ['name' => 'Tout Les Clients', 'url' => route('clients.index')],
+            ['name' => 'Nouveau Client', 'url' => route('clients.create')],
+        ];
+        return view('clients.create', compact('breadcrumbs'));
     }
 
     public function storePartial(Request $request)
@@ -123,7 +129,11 @@ class ClientController extends Controller
         $users = User::all();
         $conventionCollectives = ConventionCollective::all();
         $clients = Client::all();
-        return view('clients.edit', compact('client', 'users', 'conventionCollectives', 'clients'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Clients', 'url' => route('clients.index')],
+            ['name' => $client->name, 'url' => route('clients.edit', $client->id)],
+        ];
+        return view('clients.edit', compact('client', 'users', 'conventionCollectives', 'clients', 'breadcrumbs'));
     }
 
     public function show(Client $client)
@@ -132,8 +142,11 @@ class ClientController extends Controller
         $events = $this->clientService->getClientEvents($client);
         // Assurez-vous que la variable $user est définie
         $user = auth()->user(); // ou $user = User::find($client->user_id); si vous avez une relation utilisateur-client
-
-        return view('clients.show', compact('client', 'events', 'user'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Clients', 'url' => route('clients.index')],
+            ['name' => $client->name, 'url' => route('clients.show', $client->id)],
+        ];
+        return view('clients.show', compact('client', 'events', 'user', 'breadcrumbs'));
     }
 
     public function export()

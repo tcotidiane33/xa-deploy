@@ -8,7 +8,7 @@
 @section('content')
     <div class="container">
         <div class="row">
-            <div class="col-md-12 bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
+            <div class="col-md-12 mt-2 text-gray-800 text-xs font-medium ">
                 @livewire('client-form')
             </div>
         </div>

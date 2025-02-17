@@ -17,7 +17,7 @@
             <div class="breadcrumb">
                 <h1>Détails du client</h1>
             </div>
-            <div class="panel-body widget-shadow">
+            <div class="panel-body widget-shadow bg-gray-100 text-gray-800 text-xs font-medium me-2 mt-2 px-2.5 py-1.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
                 <h4>{{ $client->name }}</h4>
                 <table class="table">
 
@@ -157,14 +157,14 @@
         </div>
     </div>
     <hr>
-    <div class="container ">
+    <div class="container bg-gray-100 text-gray-800 text-xs font-medium me-2 mt-2 px-2.5 py-0.5 rounded dark:bg-blue-700 dark:text-blue-400 border border-blue-400">
         <h1>Calendrier</h1>
         <div class="main-content h-100 w-full">
             <div id="calendar"></div>
         </div>
     </div>
     <hr>
-    <div class="container mx-auto p-4 pt-6 md:p-6">
+    <div class="container mx-auto p-4 pt-6 md:p-6 bg-gray-100 text-gray-800 text-xs font-medium me-2 mt-2 px-2.5 py-0.5 rounded dark:bg-blue-700 dark:text-blue-400 border border-blue-400">
         <h1 class="text-2xl font-bold mb-4">Détails de l'utilisateur</h1>
 
         <div class="mb-4">

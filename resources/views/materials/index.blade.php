@@ -1,52 +1,69 @@
 @extends('layouts.admin')
 
-@section('title', 'Liste des Matériaux')
+@section('title', 'Liste des Backup')
 
 @section('content')
     <div class="main-content">
         <div class="container mx-auto px-4 py-8">
-            <div class="mb-4">
-                <a href="{{ route('materials.create') }}"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>Créer un Matériau
-                </a>
-            </div>
-
-            <div class="bg-white rounded-lg shadow p-6 overflow-x-auto shadow-md sm:rounded-lg">
-                <h2 class="text-xl font-bold mb-4">{{ __('Liste des Matériaux') }}</h2>
+            <div class="bg-white rounded-lg shadow p-4 overflow-x-auto shadow-md sm:rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">{{ __('Liste des Backup') }}</h2>
+                    <div class="flex space-x-2">
+                        <a href="{{ route('materials.create') }}"
+                            class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded inline-flex items-center transition-colors duration-150">
+                            <i class="fas fa-plus-circle mr-1"></i>
+                            Nouveau Backup
+                        </a>
+                    </div>
+                </div>
 
                 <table id="materialsTable" class="min-w-full divide-y divide-gray-200">
-                    <thead>
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col"
-                                class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Titre</th>
-                            <th scope="col"
-                                class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Type</th>
-                            <th scope="col"
-                                class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Client</th>
-                            <th scope="col"
-                                class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($materials as $material)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $material->title }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $material->type }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $material->client->name ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-4 py-2">{{ $material->title }}</td>
+                                <td class="px-4 py-2">
+                                    <span class="px-2 py-1 text-xs rounded-full 
+                                        @switch($material->type)
+                                            @case('document')
+                                                bg-blue-100 text-blue-800
+                                                @break
+                                            @case('image')
+                                                bg-green-100 text-green-800
+                                                @break
+                                            @default
+                                                bg-gray-100 text-gray-800
+                                        @endswitch
+                                    ">
+                                        {{ $material->type }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-2">{{ $material->client->name ?? 'N/A' }}</td>
+                                <td class="px-6 py-2 space-x-1">
                                     <a href="{{ route('materials.show', $material->id) }}"
-                                        class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Voir</a>
+                                        class="inline-flex items-center px-1 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition-colors duration-150">
+                                        <i class="fas fa-eye mr-1"></i> Voir
+                                    </a>
                                     <a href="{{ route('materials.export.excel', $material->id) }}"
-                                        class="text-white bg-gradient-to-r from-green-400 to-blue-500 hover:bg-gradient-to-l hover:from-green-400 hover:to-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Exporter
-                                        en Excel</a>
+                                        class="inline-flex items-center px-1 py-1 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors duration-150">
+                                        <i class="fas fa-file-excel mr-1"></i> Excel
+                                    </a>
                                     <a href="{{ route('materials.export.pdf', $material->id) }}"
-                                        class="text-white bg-gradient-to-r from-red-400 to-pink-500 hover:bg-gradient-to-l hover:from-red-400 hover:to-pink-500 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Exporter
-                                        en PDF</a>
+                                        class="inline-flex items-center px-1 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors duration-150">
+                                        <i class="fas fa-file-pdf mr-1"></i> PDF
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

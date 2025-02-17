@@ -1,12 +1,154 @@
-<div>
+<div class="client-form-container bg-gray-50 rounded-xl shadow-lg p-6 relative">
+    <style>
+        .client-form-container::before {
+            content: 'CLIENT';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 8rem;
+            font-weight: bold;
+            color: rgba(229, 231, 235, 0.2);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .form-input {
+            @apply shadow-sm border-gray-300 rounded-lg w-full py-1.5 px-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+        }
+
+        .form-select {
+            @apply shadow-sm border-gray-300 rounded-lg w-full py-1.5 px-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+        }
+
+        .form-checkbox {
+            @apply rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all duration-200;
+        }
+
+        .form-label {
+            @apply block text-gray-700 text-xs font-medium mb-1;
+        }
+
+        .form-group {
+            @apply bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4;
+        }
+
+        .step-header {
+            @apply text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200;
+        }
+
+        .step-container {
+            @apply relative z-10;
+        }
+
+        .btn-nav {
+            @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center relative overflow-hidden;
+        }
+
+        .btn-prev {
+            @apply bg-gray-500 hover:bg-gray-600 text-white focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg;
+        }
+
+        .btn-next {
+            @apply bg-blue-500 hover:bg-blue-600 text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg;
+        }
+
+        .btn-submit {
+            @apply bg-green-500 hover:bg-green-600 text-white focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-lg;
+        }
+
+        .btn-nav {
+            transform: translateY(0);
+        }
+
+        .btn-nav:hover {
+            @apply font-bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-nav:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-nav::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.5s;
+        }
+
+        .btn-nav:active::after {
+            transform: scale(0, 0);
+            opacity: 0.3;
+            transition: 1s;
+            border: 3px solidrgb(0, 106, 255);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .btn-prev:hover {
+            @apply text-white;
+            background: linear-gradient(to right, #4B5563, #6B7280);
+            padding: 10px;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            border: 3px solidrgb(0, 106, 255);
+        }
+
+        .btn-next:hover {
+            @apply text-white;
+            background: linear-gradient(to right,rgb(235, 37, 235),rgba(246, 59, 237, 0.81));
+            padding: 10px;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            border: 3px solidrgb(247, 0, 255);
+        }
+
+        .btn-submit:hover {
+            @apply text-white;
+            background: linear-gradient(to right, #059669, #10B981);
+            padding: 10px;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            border: 3px solidrgb(109, 138, 6);
+        }
+
+        .error-message {
+            @apply text-red-500 text-xs mt-1 rounded bg-red-50 px-2 py-1;
+        }
+
+        .success-message {
+            @apply text-green-500 text-xs mt-1 rounded bg-green-50 px-2 py-1;
+        }
+    </style>
+
     @if (session()->has('message'))
-        <div class="alert alert-success">
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-r-lg">
             {{ session('message') }}
         </div>
     @endif
+
     @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-r-lg">
+            <ul class="list-disc list-inside">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -14,160 +156,216 @@
         </div>
     @endif
 
-    <form wire:submit.prevent="submitForm">
+    <form wire:submit.prevent="submitForm" class="step-container">
         @if ($currentStep == 1)
             <div class="form-step">
-                <h4>Société</h4>
-                <div class="grid gap-6 mb-6 md:grid-cols-2">
-                    <div class="left">
-
+                <h4 class="step-header mb-4">
+                    <i class="fas fa-building text-blue-500 mr-2"></i>Société
+                </h4>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
                         <div class="form-group">
-                            <label for="name">Nom de la société</label>
-                            <input type="text"
-                                class="form-control w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                                id="name" wire:model="name">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-signature text-blue-500 mr-1"></i>Nom de la société *
+                            </label>
+                            <input type="text" class="form-input rounded-lg" id="name" wire:model="name">
                             @error('name')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
+
                         <div class="form-group">
-                            <label for="type_societe">Type de société</label>
-                            <input type="text"
-                                class="form-control w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                                id="type_societe" wire:model="type_societe">
+                            <label for="type_societe" class="form-label">
+                                <i class="fas fa-building text-green-500 mr-1"></i>Type de société *
+                            </label>
+                            <input type="text" class="form-input rounded-lg" id="type_societe" wire:model="type_societe">
                             @error('type_societe')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
+
                         <div class="form-group">
-                            <label for="ville">Ville</label>
-                            <input type="text"
-                                class="form-control w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                                id="ville" wire:model="ville">
+                            <label for="ville" class="form-label">
+                                <i class="fas fa-map-marker-alt text-red-500 mr-1"></i>Ville *
+                            </label>
+                            <input type="text" class="form-input rounded-lg" id="ville" wire:model="ville">
                             @error('ville')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="right">
-                        <div class="form-group">
-                            <label for="dirigeant_nom">Nom du dirigeant</label>
-                            <input type="text"
-                                class="form-control w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                                id="dirigeant_nom" wire:model="dirigeant_nom">
-                            @error('dirigeant_nom')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="dirigeant_telephone">Téléphone du dirigeant</label>
-                            <input type="text"
-                                class="form-control w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                                id="dirigeant_telephone" wire:model="dirigeant_telephone">
-                            @error('dirigeant_telephone')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="dirigeant_email">Email du dirigeant</label>
-                            <input type="email"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="name@flowbite.com" id="dirigeant_email" wire:model="dirigeant_email">
-                            @error('dirigeant_email')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
-                    <button type="button"
-                        class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-sm  px-2 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-green-700 dark:focus:ring-blue-800"
-                        wire:click="nextStep">Suivant</button>
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="dirigeant_nom" class="form-label">
+                                <i class="fas fa-user-tie text-purple-500 mr-1"></i>Nom du dirigeant *
+                            </label>
+                            <input type="text" class="form-input rounded-lg" id="dirigeant_nom" wire:model="dirigeant_nom">
+                            @error('dirigeant_nom')
+                                <span class="error-message">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dirigeant_telephone" class="form-label">
+                                <i class="fas fa-phone text-indigo-500 mr-1"></i>Téléphone du dirigeant
+                            </label>
+                            <input type="text" class="form-input rounded-lg" id="dirigeant_telephone" wire:model="dirigeant_telephone">
+                            @error('dirigeant_telephone')
+                                <span class="error-message">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dirigeant_email" class="form-label">
+                                <i class="fas fa-envelope text-yellow-500 mr-1"></i>Email du dirigeant *
+                            </label>
+                            <input type="email" class="form-input rounded-lg" id="dirigeant_email" wire:model="dirigeant_email" 
+                                placeholder="email@exemple.com">
+                            @error('dirigeant_email')
+                                <span class="error-message">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6 pt-4 border-t border-gray-200">
+                    <button type="button" wire:click="nextStep" 
+                        class="btn-nav btn-next">
+                        <span>Étape suivante</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
                 </div>
             </div>
         @endif
 
         @if ($currentStep == 2)
             <div class="form-step">
-                <h4>Contacts</h4>
-                <div class="grid gap-6 mb-6 md:grid-cols-2">
-                    <div class="left">
-                        <div class="form-group">
-                            <label for="contact_paie_nom">Nom du contact paie</label>
-                            <input type="text" class="form-control" id="contact_paie_nom"
-                                wire:model="contact_paie_nom">
-                            @error('contact_paie_nom')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                <h4 class="step-header mb-4">
+                    <i class="fas fa-address-card text-blue-500 mr-2"></i>Contacts
+                </h4>
+
+                <!-- Contact Paie -->
+                <div class="mb-6">
+                    <h5 class="text-sm font-semibold text-gray-700 mb-3">
+                        <i class="fas fa-money-check text-green-500 mr-1"></i>Contact Paie
+                    </h5>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="contact_paie_nom" class="form-label">
+                                    <i class="fas fa-user text-blue-500 mr-1"></i>Nom *
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_paie_nom"
+                                    wire:model="contact_paie_nom">
+                                @error('contact_paie_nom')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="contact_paie_prenom" class="form-label">
+                                    <i class="fas fa-user text-green-500 mr-1"></i>Prénom *
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_paie_prenom"
+                                    wire:model="contact_paie_prenom">
+                                @error('contact_paie_prenom')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="contact_paie_prenom">Prénom du contact paie</label>
-                            <input type="text" class="form-control" id="contact_paie_prenom"
-                                wire:model="contact_paie_prenom">
-                            @error('contact_paie_prenom')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="right">
-                        <div class="form-group">
-                            <label for="contact_paie_telephone">Téléphone du contact paie</label>
-                            <input type="text" class="form-control" id="contact_paie_telephone"
-                                wire:model="contact_paie_telephone">
-                            @error('contact_paie_telephone')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_paie_email">Email du contact paie</label>
-                            <input type="email" class="form-control" id="contact_paie_email"
-                                wire:model="contact_paie_email">
-                            @error('contact_paie_email')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="contact_paie_telephone" class="form-label">
+                                    <i class="fas fa-phone text-indigo-500 mr-1"></i>Téléphone
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_paie_telephone"
+                                    wire:model="contact_paie_telephone">
+                                @error('contact_paie_telephone')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="contact_paie_email" class="form-label">
+                                    <i class="fas fa-envelope text-yellow-500 mr-1"></i>Email *
+                                </label>
+                                <input type="email" class="form-input rounded-lg" id="contact_paie_email"
+                                    wire:model="contact_paie_email" 
+                                    placeholder="email@exemple.com">
+                                @error('contact_paie_email')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid gap-6 mb-6 md:grid-cols-2">
-                    <div class="left">
-                        <div class="form-group">
-                            <label for="contact_compta_nom">Nom du contact comptabilité</label>
-                            <input type="text" class="form-control" id="contact_compta_nom"
-                                wire:model="contact_compta_nom">
-                            @error('contact_compta_nom')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                <!-- Contact Comptabilité -->
+                <div class="mb-6">
+                    <h5 class="text-sm font-semibold text-gray-700 mb-3">
+                        <i class="fas fa-calculator text-purple-500 mr-1"></i>Contact Comptabilité
+                    </h5>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="contact_compta_nom" class="form-label">
+                                    <i class="fas fa-user text-blue-500 mr-1"></i>Nom *
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_compta_nom"
+                                    wire:model="contact_compta_nom">
+                                @error('contact_compta_nom')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="contact_compta_prenom" class="form-label">
+                                    <i class="fas fa-user text-green-500 mr-1"></i>Prénom *
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_compta_prenom"
+                                    wire:model="contact_compta_prenom">
+                                @error('contact_compta_prenom')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="contact_compta_prenom">Prénom du contact comptabilité</label>
-                            <input type="text" class="form-control" id="contact_compta_prenom"
-                                wire:model="contact_compta_prenom">
-                            @error('contact_compta_prenom')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="right">
-                        <div class="form-group">
-                            <label for="contact_compta_telephone">Téléphone du contact comptabilité</label>
-                            <input type="text" class="form-control" id="contact_compta_telephone"
-                                wire:model="contact_compta_telephone">
-                            @error('contact_compta_telephone')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="contact_compta_email">Email du contact comptabilité</label>
-                            <input type="email" class="form-control" id="contact_compta_email"
-                                wire:model="contact_compta_email">
-                            @error('contact_compta_email')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label for="contact_compta_telephone" class="form-label">
+                                    <i class="fas fa-phone text-indigo-500 mr-1"></i>Téléphone
+                                </label>
+                                <input type="text" class="form-input rounded-lg" id="contact_compta_telephone"
+                                    wire:model="contact_compta_telephone">
+                                @error('contact_compta_telephone')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="contact_compta_email" class="form-label">
+                                    <i class="fas fa-envelope text-yellow-500 mr-1"></i>Email *
+                                </label>
+                                <input type="email" class="form-input rounded-lg" id="contact_compta_email"
+                                    wire:model="contact_compta_email"
+                                    placeholder="email@exemple.com">
+                                @error('contact_compta_email')
+                                    <span class="error-message">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary" wire:click="previousStep">Précédent</button>
-                <button type="button" class="btn btn-primary" wire:click="nextStep">Suivant</button>
+
+                <!-- Boutons de navigation -->
+                <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
+                    <button type="button" wire:click="previousStep" 
+                        class="btn-nav btn-prev">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>Étape précédente</span>
+                    </button>
+                    <button type="button" wire:click="nextStep" 
+                        class="btn-nav btn-next">
+                        <span>Étape suivante</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
             </div>
         @endif
 
@@ -185,7 +383,7 @@
                                 @endforeach
                             </select>
                             @error('responsable_paie_id')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -193,7 +391,7 @@
                             <input type="text" class="form-control" id="responsable_telephone_ld"
                                 wire:model="responsable_telephone_ld">
                             @error('responsable_telephone_ld')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -206,7 +404,7 @@
                                 @endforeach
                             </select>
                             @error('gestionnaire_principal_id')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -221,7 +419,7 @@
                                 @endforeach
                             </select>
                             @error('binome_id')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -234,7 +432,7 @@
                                 @endforeach
                             </select>
                             @error('convention_collective_id')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -242,14 +440,24 @@
                             <input type="date" class="form-control" id="maj_fiche_para"
                                 wire:model="maj_fiche_para">
                             @error('maj_fiche_para')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                 </div>
-
-                <button type="button" class="btn btn-secondary" wire:click="previousStep">Précédent</button>
-                <button type="button" class="btn btn-primary" wire:click="nextStep">Suivant</button>
+                <!-- Boutons de navigation -->
+                <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
+                    <button type="button" wire:click="previousStep" 
+                        class="btn-nav btn-prev">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>Étape précédente</span>
+                    </button>
+                    <button type="button" wire:click="nextStep" 
+                        class="btn-nav btn-next">
+                        <span>Étape suivante</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
             </div>
         @endif
 
@@ -262,7 +470,7 @@
                             <label for="saisie_variables">Saisie des variables</label>
                             <input type="checkbox" id="saisie_variables" wire:model="saisie_variables">
                             @error('saisie_variables')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         {{-- @if ($saisie_variables) --}}
@@ -271,7 +479,7 @@
                                 <input type="date" class="form-control" id="date_saisie_variables"
                                     wire:model="date_saisie_variables">
                                 @error('date_saisie_variables')
-                                    <span class="text-danger">{{ $message }}</span>
+                                    <span class="error-message">{{ $message }}</span>
                                 @enderror
                             </div>
                         {{-- @endif --}}
@@ -281,10 +489,10 @@
                             <input type="date" class="form-control" id="date_formation_saisie"
                                 wire:model="date_formation_saisie">
                             @error('client_forme_saisie')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                             @error('date_formation_saisie')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -292,7 +500,7 @@
                             <input type="date" class="form-control" id="date_debut_prestation"
                                 wire:model="date_debut_prestation">
                             @error('date_debut_prestation')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -302,7 +510,7 @@
                             <input type="date" class="form-control" id="date_fin_prestation"
                                 wire:model="date_fin_prestation">
                             @error('date_fin_prestation')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -310,7 +518,7 @@
                             <input type="date" class="form-control" id="date_signature_contrat"
                                 wire:model="date_signature_contrat">
                             @error('date_signature_contrat')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -318,7 +526,7 @@
                             <input type="date" class="form-control" id="date_rappel_mail"
                                 wire:model="date_rappel_mail">
                             @error('date_rappel_mail')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -331,7 +539,7 @@
                             <label for="taux_at">Taux AT</label>
                             <input type="text" class="form-control" id="taux_at" wire:model="taux_at">
                             @error('taux_at')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -340,10 +548,10 @@
                             <input type="date" class="form-control" id="date_adhesion_mydrh"
                                 wire:model="date_adhesion_mydrh">
                             @error('adhesion_mydrh')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                             @error('date_adhesion_mydrh')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -352,7 +560,7 @@
                             <label for="is_cabinet">Est un cabinet</label>
                             <input type="checkbox" id="is_cabinet" wire:model="is_cabinet">
                             @error('is_cabinet')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
@@ -364,15 +572,22 @@
                                 @endforeach
                             </select>
                             @error('portfolio_cabinet_id')
-                                <span class="text-danger">{{ $message }}</span>
+                                <span class="error-message">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                 </div>
 
 
-                <button type="button" class="btn btn-secondary" wire:click="previousStep">Précédent</button>
-                <button type="submit" class="btn btn-success">Soumettre</button>
+                <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
+                    <button type="button" wire:click="previousStep" 
+                        class="btn-nav btn-prev">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>Étape précédente</span>
+                    </button>
+                    <button type="submit" class="btn btn-success">Soumettre</button>
+                </div>
+
             </div>
         @endif
     </form>

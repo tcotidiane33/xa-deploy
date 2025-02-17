@@ -45,7 +45,7 @@
                 <!-- Matériels -->
                 <li>
                     <a href="{{ route('materials.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-box-seam"></span><span class="mtext">Matériels</span>
+                        <span class="micon bi bi-box-seam"></span><span class="mtext">Backups</span>
                     </a>
                 </li>
                 <!-- Conention -->

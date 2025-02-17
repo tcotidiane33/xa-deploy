@@ -39,15 +39,21 @@ class MaterialController extends Controller
         // Fetch all clients for the dropdown
         $clients = Client::all();
         $tickets = Ticket::latest()->take(5)->get(); 
-    $posts = Post::latest()->take(5)->get(); 
-
-        return view('materials.index', compact('materials', 'clients', 'posts','tickets'));
+        $posts = Post::latest()->take(5)->get(); 
+        $breadcrumbs = [
+            ['name' => 'Tout Les Matériaux', 'url' => route('materials.index')],
+        ];
+        return view('materials.index', compact('materials', 'clients', 'posts','tickets', 'breadcrumbs'));
     }
 
     public function create()
     {
         $clients = Client::all();
-        return view('materials.create', compact('clients'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Matériaux', 'url' => route('materials.index')],
+            ['name' => 'Nouveau Matériau', 'url' => route('materials.create')],
+        ];
+        return view('materials.create', compact('clients', 'breadcrumbs'));
     }
 
     public function store(Request $request)
@@ -69,14 +75,21 @@ class MaterialController extends Controller
     public function show(Material $material)
     {
         $client = $material->client; // Récupérer le client associé au matériel
-
-        return view('materials.show', compact('material', 'client'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Matériaux', 'url' => route('materials.index')],
+            ['name' => $material->title, 'url' => route('materials.show', $material->id)],
+        ];
+        return view('materials.show', compact('material', 'client', 'breadcrumbs'));
     }
 
     public function edit(Material $material)
     {
         $clients = Client::all();
-        return view('materials.edit', compact('material', 'clients'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Matériaux', 'url' => route('materials.index')],
+            ['name' => $material->title, 'url' => route('materials.edit', $material->id)],
+        ];  
+        return view('materials.edit', compact('material', 'clients', 'breadcrumbs'));
     }
 
     public function update(Request $request, Material $material)

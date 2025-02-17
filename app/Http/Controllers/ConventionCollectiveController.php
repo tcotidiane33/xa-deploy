@@ -9,13 +9,20 @@ class ConventionCollectiveController extends Controller
 {
     public function index()
     {
-        $conventionCollectives = ConventionCollective::all();
-        return view('convention-collectives.index', compact('conventionCollectives'));
+        $conventionCollectives = ConventionCollective::paginate(10);
+        $breadcrumbs = [
+            ['name' => 'Tout Les Conventions Collectives', 'url' => route('convention-collectives.index')],
+        ];
+        return view('convention-collectives.index', compact('conventionCollectives', 'breadcrumbs'));
     }
     
     public function create()
     {
-        return view('convention-collectives.create');
+        $breadcrumbs = [
+            ['name' => 'Tout Les Conventions Collectives', 'url' => route('convention-collectives.index')],
+            ['name' => 'Nouvelle Convention Collective', 'url' => route('convention-collectives.create')],
+        ];
+        return view('convention-collectives.create', compact('breadcrumbs'));
     }
     
     public function store(Request $request)
@@ -33,12 +40,20 @@ class ConventionCollectiveController extends Controller
     
     public function show(ConventionCollective $conventionCollective)
     {
-        return view('convention-collectives.show', compact('conventionCollective'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Conventions Collectives', 'url' => route('convention-collectives.index')],
+            ['name' => $conventionCollective->name, 'url' => route('convention-collectives.show', $conventionCollective->id)],
+        ];
+        return view('convention-collectives.show', compact('conventionCollective', 'breadcrumbs'));
     }
     
     public function edit(ConventionCollective $conventionCollective)
     {
-        return view('convention-collectives.edit', compact('conventionCollective'));
+        $breadcrumbs = [
+            ['name' => 'Tout Les Conventions Collectives', 'url' => route('convention-collectives.index')],
+            ['name' => $conventionCollective->name, 'url' => route('convention-collectives.edit', $conventionCollective->id)],
+        ];
+            return view('convention-collectives.edit', compact('conventionCollective', 'breadcrumbs'));
     }
     
     public function update(Request $request, ConventionCollective $conventionCollective)
