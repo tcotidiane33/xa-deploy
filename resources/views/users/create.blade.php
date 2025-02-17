@@ -3,67 +3,130 @@
 @section('title', 'Créer un utilisateur')
 
 @section('content')
-    <div class="main-content p-1">
-        <!-- Formulaire de création d'utilisateur -->
-        <div class="bg-white shadow-md rounded-lg p-3">
-            <h1 class="text-2xl font-semibold text-gray-800 mb-6">Créer un utilisateur</h1>
+<div class="main-content">
+    <div class="container mx-auto px-4 py-8">
+        <div class="user-form-container bg-gray-50 rounded-xl shadow-lg p-6 relative">
+            <style>
+                .user-form-container::before {
+                    content: 'UTILISATEUR';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                    font-size: 8rem;
+                    font-weight: bold;
+                    color: rgba(229, 231, 235, 0.2);
+                    white-space: nowrap;
+                    pointer-events: none;
+                    z-index: 0;
+                }
 
-            <form action="{{ route('users.store') }}" method="POST">
+                .form-input {
+                    @apply shadow-sm border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+                }
+
+                .form-label {
+                    @apply block text-gray-700 text-sm font-medium mb-2;
+                }
+
+                .form-group {
+                    @apply mb-6 relative z-10;
+                }
+
+                .btn-action {
+                    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center relative overflow-hidden shadow-md hover:shadow-lg;
+                }
+
+                .btn-action:hover {
+                    @apply transform scale-105 font-bold;
+                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+                }
+
+                .btn-action:active {
+                    @apply transform scale-95;
+                }
+
+                .btn-submit {
+                    @apply bg-gradient-to-r from-green-400 to-blue-500 text-white hover:from-green-500 hover:to-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500;
+                }
+
+                .btn-cancel {
+                    @apply bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-gray-400;
+                }
+
+                .role-checkbox {
+                    @apply rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all duration-200;
+                }
+            </style>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 relative z-10">
+                <i class="fas fa-user-plus text-blue-500 mr-2"></i>Créer un Utilisateur
+            </h2>
+
+            <form method="POST" action="{{ route('users.store') }}" class="relative z-10">
                 @csrf
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Informations de base -->
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user text-blue-500 mr-1"></i>Nom complet *
+                            </label>
+                            <input type="text" name="name" id="name" class="form-input" required>
+                        </div>
 
-                <!-- Nom & Prénom -->
-                <div class="mb-6">
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nom & Prénom</label>
-                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 @error('name') border-red-500 @enderror" value="{{ old('name') }}" required>
-                    @error('name')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope text-green-500 mr-1"></i>Email *
+                            </label>
+                            <input type="email" name="email" id="email" class="form-input" required>
+                        </div>
+                    </div>
 
-                <!-- Email -->
-                <div class="mb-6">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 @error('email') border-red-500 @enderror" value="{{ old('email') }}" required>
-                    @error('email')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <!-- Mot de passe -->
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock text-red-500 mr-1"></i>Mot de passe *
+                            </label>
+                            <input type="password" name="password" id="password" class="form-input" required>
+                        </div>
 
-                <!-- Mot de passe -->
-                <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
-                    <input type="password" id="password" name="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 @error('password') border-red-500 @enderror" required>
-                    @error('password')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Confirmation du mot de passe -->
-                <div class="mb-6">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirmer le mot de passe</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                        <div class="form-group">
+                            <label for="password_confirmation" class="form-label">
+                                <i class="fas fa-lock text-orange-500 mr-1"></i>Confirmer le mot de passe *
+                            </label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-input" required>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Rôles -->
-                <div class="mb-6">
-                    <label for="roles" class="block text-sm font-medium text-gray-700 mb-2">Rôles</label>
-                    <select id="roles" name="roles[]" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 @error('roles') border-red-500 @enderror" multiple required>
+                <div class="form-group mt-6">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag text-purple-500 mr-1"></i>Rôles *
+                    </label>
+                    <div class="grid grid-cols-3 gap-4 mt-2">
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ in_array($role->id, old('roles', [])) ? 'selected' : '' }}>{{ $role->name }}</option>
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" class="role-checkbox">
+                                <label class="text-sm text-gray-700">{{ $role->name }}</label>
+                            </div>
                         @endforeach
-                    </select>
-                    @error('roles')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                    </div>
                 </div>
 
-                <!-- Bouton de soumission -->
-                <div class="flex justify-end">
-                    <button type="submit" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                        Ajouter un nouveau membre
+                <!-- Boutons d'action -->
+                <div class="flex justify-end space-x-4 mt-8 pt-4 border-t border-gray-200">
+                    <a href="{{ route('users.index') }}" class="btn-action btn-cancel">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn-action btn-submit">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
                     </button>
                 </div>
             </form>
         </div>
     </div>
+</div>
 @endsection

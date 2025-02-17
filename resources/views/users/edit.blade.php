@@ -3,130 +3,162 @@
 @section('title', 'Modifier l\'utilisateur')
 
 @section('content')
-<div class="container mx-auto p-4 pt-6 md:p-6">
-    <h1 class="text-2xl font-bold mb-4">Modifier l'utilisateur</h1>
+<div class="main-content">
+    <div class="container mx-auto px-4 py-8">
+        <div class="user-form-container bg-gray-50 rounded-xl shadow-lg p-6 relative">
+            <style>
+                .user-form-container::before {
+                    content: 'MODIFIER';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                    font-size: 8rem;
+                    font-weight: bold;
+                    color: rgba(229, 231, 235, 0.2);
+                    white-space: nowrap;
+                    pointer-events: none;
+                    z-index: 0;
+                }
 
-    <form action="{{ route('users.update', $user) }}" method="POST">
-        @csrf
-        @method('PUT')
+                .form-input {
+                    @apply shadow-sm border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+                }
 
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-                Nom
-            </label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ $user->name }}" required>
+                .form-label {
+                    @apply block text-gray-700 text-sm font-medium mb-2;
+                }
+
+                .form-group {
+                    @apply mb-6 relative z-10;
+                }
+
+                .btn-action {
+                    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center relative overflow-hidden shadow-md hover:shadow-lg;
+                }
+
+                .btn-action:hover {
+                    @apply transform scale-105 font-bold;
+                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+                }
+
+                .btn-action:active {
+                    @apply transform scale-95;
+                }
+
+                .btn-submit {
+                    @apply bg-gradient-to-r from-green-400 to-blue-500 text-white hover:from-green-500 hover:to-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500;
+                }
+
+                .btn-cancel {
+                    @apply bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-gray-400;
+                }
+
+                .btn-delete {
+                    @apply bg-gradient-to-r from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 focus:ring-2 focus:ring-offset-2 focus:ring-red-400;
+                }
+
+                .role-checkbox {
+                    @apply rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all duration-200;
+                }
+            </style>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 relative z-10">
+                <i class="fas fa-user-edit text-blue-500 mr-2"></i>Modifier l'Utilisateur
+            </h2>
+
+            <form method="POST" action="{{ route('users.update', $user) }}" class="relative z-10">
+                @csrf
+                @method('PUT')
+                
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Informations de base -->
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user text-blue-500 mr-1"></i>Nom complet *
+                            </label>
+                            <input type="text" name="name" id="name" class="form-input" value="{{ $user->name }}" required>
+                            @error('name')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope text-green-500 mr-1"></i>Email *
+                            </label>
+                            <input type="email" name="email" id="email" class="form-input" value="{{ $user->email }}" required>
+                            @error('email')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe (optionnel pour la modification) -->
+                    <div class="space-y-4">
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock text-red-500 mr-1"></i>Nouveau mot de passe
+                            </label>
+                            <input type="password" name="password" id="password" class="form-input">
+                            <p class="text-xs text-gray-500 mt-1">Laissez vide pour conserver le mot de passe actuel</p>
+                            @error('password')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password_confirmation" class="form-label">
+                                <i class="fas fa-lock text-orange-500 mr-1"></i>Confirmer le nouveau mot de passe
+                            </label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rôles -->
+                <div class="form-group mt-6">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag text-purple-500 mr-1"></i>Rôles *
+                    </label>
+                    <div class="grid grid-cols-3 gap-4 mt-2">
+                        @foreach($roles as $role)
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" name="roles[]" value="{{ $role->name }}" 
+                                    class="role-checkbox" 
+                                    {{ $user->hasRole($role->name) ? 'checked' : '' }}>
+                                <label class="text-sm text-gray-700">{{ $role->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error('roles')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="flex justify-between mt-8 pt-4 border-t border-gray-200">
+                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-action btn-delete" 
+                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+                            <i class="fas fa-trash-alt mr-2"></i>Supprimer
+                        </button>
+                    </form>
+                    
+                    <div class="flex space-x-4">
+                        <a href="{{ route('users.index') }}" class="btn-action btn-cancel">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn-action btn-submit">
+                            <i class="fas fa-save mr-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                Email
-            </label>
-            <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" required>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                Mot de passe
-            </label>
-            <input type="password" name="password" id="password" class="form-control">
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="password_confirmation">
-                Confirmer le mot de passe
-            </label>
-            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="roles">
-                Rôles
-            </label>
-            <select name="roles[]" id="roles" class="form-control" multiple required>
-                @foreach ($roles as $role)
-                    <option value="{{ $role->name }}" {{ $user->roles->contains('name', $role->name) ? 'selected' : '' }}>
-                        {{ $role->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Mettre à jour</button>
-    </form>
-
-    <hr class="my-6">
-
-    <h2 class="text-xl font-bold mb-4">Clients rattachés</h2>
-    <form action="{{ route('admin.users.attachClient', $user) }}" method="POST">
-        @csrf
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="client_id">
-                Ajouter un client
-            </label>
-            <select name="client_id" id="client_id" class="form-control" required>
-                <option value="">Sélectionner un client</option>
-                @foreach ($clients as $client)
-                    <option value="{{ $client->id }}">{{ $client->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Ajouter</button>
-    </form>
-
-    <table class="table-auto w-full mt-4">
-        <thead>
-            <tr>
-                <th class="px-4 py-2">Nom</th>
-                <th class="px-4 py-2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($user->clients as $client)
-                <tr>
-                    <td class="border px-4 py-2">{{ $client->name }}</td>
-                    <td class="border px-4 py-2">
-                        <form action="{{ route('admin.users.detachClient', $user) }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            <input type="hidden" name="client_id" value="{{ $client->id }}">
-                            <button type="submit" class="btn btn-danger">Détacher</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <hr class="my-6">
-
-    <h2 class="text-xl font-bold mb-4">Transférer des clients</h2>
-    <form action="{{ route('admin.users.transferClients', $user) }}" method="POST">
-        @csrf
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="new_user_id">
-                Transférer à
-            </label>
-            <select name="new_user_id" id="new_user_id" class="form-control" required>
-                <option value="">Sélectionner un utilisateur</option>
-                @foreach ($users as $otherUser)
-                    @if ($otherUser->id !== $user->id)
-                        <option value="{{ $otherUser->id }}">{{ $otherUser->name }}</option>
-                    @endif
-                @endforeach
-            </select>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="client_ids">
-                Clients à transférer
-            </label>
-            <select name="client_ids[]" id="client_ids" class="form-control" multiple required>
-                @foreach ($user->clients as $client)
-                    <option value="{{ $client->id }}">{{ $client->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Transférer</button>
-    </form>
+    </div>
 </div>
 @endsection

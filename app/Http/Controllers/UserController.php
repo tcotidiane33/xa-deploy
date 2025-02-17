@@ -110,7 +110,7 @@ class UserController extends Controller
         $users = User::all(); // Ajoutez cette ligne pour récupérer tous les utilisateurs
         $breadcrumbs = [
             ['name' => 'Utilisateurs', 'url' => route('users.index')],
-            ['name' => 'Modifier un utilisateur', 'url' => route('users.edit')],
+            ['name' => 'Modifier un utilisateur', 'url' => route('users.edit', $user)],
         ];
         return view('users.edit', compact('user', 'roles', 'clients', 'users', 'breadcrumbs'));
     }
