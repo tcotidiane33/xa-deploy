@@ -33,12 +33,12 @@ class FicheClientController extends Controller
         $clients = Client::all();
         $periodesPaie = PeriodePaie::all();
         $ficheClient = new FicheClient(); // Ajoutez cette ligne
-          $tickets = Ticket::latest()->take(5)->get();
-    $posts = Post::latest()->take(5)->get();
-    $breadcrumbs = [
-        // ['name' => 'Dashboard', 'url' => route('dashboard')],
-        ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
-    ];
+        $tickets = Ticket::latest()->take(5)->get();
+        $posts = Post::latest()->take(5)->get();
+        $breadcrumbs = [
+            // ['name' => 'Dashboard', 'url' => route('dashboard')],
+            ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
+        ];
 
         return view('clients.fiches_clients.index', compact('fichesClients', 'clients','tickets','posts', 'periodesPaie', 'breadcrumbs', 'ficheClient'));
     }
@@ -54,15 +54,34 @@ class FicheClientController extends Controller
         return view('clients.fiches_clients.create', compact('clients', 'periodesPaie', 'breadcrumbs'));
     }
 
+    // public function store(StoreFicheClientRequest $request)
+    // {
+    //     $validated = $request->validated();
+    //     \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
+
+    //     FicheClient::create($validated);
+
+    //     return redirect()->route('fiches-clients.index')->with('success', 'Fiche client créée avec succès.');
+    // }
+
     public function store(StoreFicheClientRequest $request)
-    {
-        $validated = $request->validated();
-        \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
+        {
+            try {
+                $validated = $request->validated();
+                \Log::info('Validated Data:', $validated);
 
-        FicheClient::create($validated);
+                FicheClient::create($validated);
 
-        return redirect()->route('fiches-clients.index')->with('success', 'Fiche client créée avec succès.');
-    }
+                return redirect()
+                    ->route('fiches-clients.index')
+                    ->with('success', 'Fiche client créée avec succès.');
+            } catch (\Exception $e) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', $e->getMessage());
+            }
+        }
 
     public function edit(FicheClient $fiches_client)
     {
@@ -74,21 +93,43 @@ class FicheClientController extends Controller
         ];
         return view('clients.fiches_clients.edit', compact('fiches_client', 'clients', 'periodesPaie', 'breadcrumbs'));
     }
-
     public function update(UpdateFicheClientRequest $request, FicheClient $fiches_client)
     {
-        $validated = $request->validated();
-        \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
+        try {
+            $validated = $request->validated();
+            \Log::info('Validated Data:', $validated);
 
-        if (!empty($validated['notes'])) {
-            $newNotes = $fiches_client->notes . "\n" . now()->format('Y-m-d') . ': ' . $validated['notes'];
-            $validated['notes'] = $newNotes;
+            if (!empty($validated['notes'])) {
+                $newNotes = $fiches_client->notes . "\n" . now()->format('Y-m-d') . ': ' . $validated['notes'];
+                $validated['notes'] = $newNotes;
+            }
+
+            $fiches_client->update($validated);
+
+            return redirect()
+                ->route('fiches-clients.index')
+                ->with('success', 'Informations mises à jour avec succès.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
-
-        $fiches_client->update($validated);
-
-        return redirect()->route('fiches-clients.index')->with('success', 'Informations mises à jour avec succès.');
     }
+    // public function update(UpdateFicheClientRequest $request, FicheClient $fiches_client)
+    // {
+    //     $validated = $request->validated();
+    //     \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
+
+    //     if (!empty($validated['notes'])) {
+    //         $newNotes = $fiches_client->notes . "\n" . now()->format('Y-m-d') . ': ' . $validated['notes'];
+    //         $validated['notes'] = $newNotes;
+    //     }
+
+    //     $fiches_client->update($validated);
+
+    //     return redirect()->route('fiches-clients.index')->with('success', 'Informations mises à jour avec succès.');
+    // }
     public function show(FicheClient $ficheClient)
     {
         return response()->json($ficheClient);

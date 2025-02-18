@@ -44,13 +44,40 @@ class FicheClient extends Model
     {
         parent::boot();
 
-        static::created(function ($ficheClient) {
+        static::creating(function ($ficheClient) {
+            // Vérifier si une fiche existe déjà pour ce client et cette période
+            $existingFiche = static::where('client_id', $ficheClient->client_id)
+                                 ->where('periode_paie_id', $ficheClient->periode_paie_id)
+                                 ->first();
+
+            if ($existingFiche) {
+                throw new \Exception('Une fiche existe déjà pour ce client sur cette période de paie.');
+            }
+
             $ficheClient->notifyAction('created', 'Fiche client créée');
         });
 
-        static::updated(function ($ficheClient) {
+        static::updating(function ($ficheClient) {
+            // Vérifier si une autre fiche existe déjà pour ce client et cette période
+            $existingFiche = static::where('client_id', $ficheClient->client_id)
+                                 ->where('periode_paie_id', $ficheClient->periode_paie_id)
+                                 ->where('id', '!=', $ficheClient->id)
+                                 ->first();
+
+            if ($existingFiche) {
+                throw new \Exception('Une autre fiche existe déjà pour ce client sur cette période de paie.');
+            }
+
             $ficheClient->notifyAction('updated', 'Fiche client mise à jour');
         });
+
+        // static::created(function ($ficheClient) {
+        //     $ficheClient->notifyAction('created', 'Fiche client créée');
+        // });
+
+        // static::updated(function ($ficheClient) {
+        //     $ficheClient->notifyAction('updated', 'Fiche client mise à jour');
+        // });
     }
 
     public function notifyAction($action, $details)
