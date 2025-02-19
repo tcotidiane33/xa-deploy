@@ -185,6 +185,7 @@
                         <li class="inline-flex items-center">
                             <a href="{{ route('dashboard') }}"
                                 class="text-gray-700 hover:text-gray-900 inline-flex items-center ">
+                                <span class="p-1"></span>
                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
