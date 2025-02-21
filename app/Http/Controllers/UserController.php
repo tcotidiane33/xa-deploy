@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use App\Services\AccessControlService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\ClientTransferNotification;
+use App\Models\FicheClient;
+use App\Models\PeriodePaie;
+use App\Models\ClientHistory;
 
 class UserController extends Controller
 {
@@ -91,15 +95,25 @@ class UserController extends Controller
         // Charger les relations nécessaires
         $user->load('roles', 'clientsAsGestionnaire', 'clientsAsResponsable', 'clientsAsBinome');
 
-        // Récupérer tous les clients pour permettre l'ajout de nouveaux clients
-        $clients = Client::all();
-        $users = User::all();
+        // Récupérer les clients disponibles (non encore rattachés à l'utilisateur)
+        $availableClients = Client::whereDoesntHave('users', function($query) use ($user) {
+            $query->where('users.id', $user->id);
+        })->get();
+
+        // Récupérer les relations clients-utilisateur
+        $userClients = DB::table('client_user')
+            ->join('clients', 'client_user.client_id', '=', 'clients.id')
+            ->where('client_user.user_id', $user->id)
+            ->select('clients.*', 'client_user.role', 'client_user.created_at')
+            ->get();
+
         $breadcrumbs = [
+            ['name' => 'Tableau de bord', 'url' => route('dashboard')],
             ['name' => 'Utilisateurs', 'url' => route('users.index')],
-            ['name' => 'Voir un utilisateur', 'url' => route('users.create')],
+            ['name' => $user->name, 'url' => '#']
         ];
 
-        return view('users.show', compact('user', 'clients','users', 'breadcrumbs'));
+        return view('users.show', compact('user', 'userClients', 'availableClients', 'breadcrumbs'));
     }
 
 
@@ -149,35 +163,111 @@ class UserController extends Controller
 
     public function manageClients(User $user)
     {
-        $clients = Client::whereHas('gestionnaires', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->paginate(15);
+        // Récupérer tous les clients gérés par l'utilisateur avec leurs rôles et fiches
+        $managedClients = Client::where(function($query) use ($user) {
+            $query->where('gestionnaire_principal_id', $user->id)
+                  ->orWhere('responsable_paie_id', $user->id)
+                  ->orWhere('binome_id', $user->id);
+        })->with(['ficheClients' => function($query) {
+            $query->latest('updated_at');
+        }])->get()->map(function($client) use ($user) {
+            $role = null;
+            if ($client->gestionnaire_principal_id == $user->id) {
+                $role = 'gestionnaire';
+            } elseif ($client->responsable_paie_id == $user->id) {
+                $role = 'responsable';
+            } elseif ($client->binome_id == $user->id) {
+                $role = 'binome';
+            }
+            return [
+                'client' => $client,
+                'role' => $role,
+                'fiche_client' => $client->ficheClients->first()
+            ];
+        });
 
-        return view('users.manage_clients', compact('user', 'clients'));
+        // Récupérer les utilisateurs disponibles pour le transfert
+        $availableUsers = User::where('id', '!=', $user->id)
+            ->whereHas('roles', function($query) {
+                $query->whereIn('name', ['gestionnaire', 'responsable']);
+            })->get();
+
+        $periodesPaie = PeriodePaie::orderBy('created_at', 'desc')->get();
+        $breadcrumbs = [
+            ['name' => 'Tableau de bord', 'url' => route('dashboard')],
+            ['name' => 'Utilisateurs', 'url' => route('users.index')],
+            ['name' => $user->name, 'url' => route('users.show', $user)],
+            ['name' => 'Gestion des clients', 'url' => '#']
+        ];
+
+        return view('users.manage_clients', compact('user', 'managedClients', 'availableUsers', 'periodesPaie', 'breadcrumbs'));
     }
 
     public function attachClient(Request $request, User $user)
     {
-        $request->validate([
+        $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'role' => 'required|string|in:gestionnaire,binome,responsable',
+            'role' => 'required|in:gestionnaire,responsable,binome',
         ]);
 
-        $client = Client::find($request->client_id);
+        try {
+            DB::beginTransaction();
 
-        switch ($request->role) {
-            case 'gestionnaire':
-                $client->assignGestionnairePrincipal($user->id);
-                break;
-            case 'binome':
-                $client->assignBinome($user->id);
-                break;
-            case 'responsable':
-                $client->assignResponsablePaie($user->id);
-                break;
+            $client = Client::findOrFail($validated['client_id']);
+            $client->attachUser($user->id, $validated['role']);
+
+            // Envoyer une notification
+            $user->notifyUserAssignment($user, $client, $validated['role']);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Client rattaché avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Une erreur est survenue lors du rattachement du client.']);
         }
+    }
 
-        return redirect()->back()->with('success', 'Client ajouté avec succès.');
+    public function updateClientRelation(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'role' => 'required|in:gestionnaire,responsable,binome',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $client = Client::findOrFail($validated['client_id']);
+            
+            // Détacher l'ancien rôle
+            $oldRole = DB::table('client_user')
+                ->where('client_id', $client->id)
+                ->where('user_id', $user->id)
+                ->value('role');
+
+            if ($oldRole) {
+                switch ($oldRole) {
+                    case 'gestionnaire':
+                        $client->gestionnaire_principal_id = null;
+                        break;
+                    case 'responsable':
+                        $client->responsable_paie_id = null;
+                        break;
+                    case 'binome':
+                        $client->binome_id = null;
+                        break;
+                }
+            }
+
+            // Attacher le nouveau rôle
+            $client->attachUser($user->id, $validated['role']);
+            
+            DB::commit();
+            return redirect()->back()->with('success', 'Relation mise à jour avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Une erreur est survenue lors de la mise à jour de la relation.']);
+        }
     }
 
     public function detachClient(Request $request, User $user)
@@ -245,14 +335,95 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Clients transférés avec succès.');
     }
 
-    private function transferClientBetweenUsers(Client $client, User $fromUser, User $toUser)
+    public function transferClient(Request $request, User $fromUser)
     {
-        $client->gestionnaires()->detach($fromUser->id);
-        $client->gestionnaires()->attach($toUser->id);
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'to_user_id' => 'required|exists:users,id',
+            'current_role' => 'required|in:gestionnaire,responsable,binome',
+            'periode_paie_id' => 'required|exists:periodes_paie,id',
+            'notes' => 'nullable|string'
+        ]);
 
-        if ($client->gestionnaire_principal_id == $fromUser->id) {
-            $client->gestionnaire_principal_id = $toUser->id;
+        try {
+            DB::beginTransaction();
+
+            $client = Client::findOrFail($request->client_id);
+            $toUser = User::findOrFail($request->to_user_id);
+
+            // Vérifier si l'utilisateur cible a le bon rôle
+            if (!$toUser->hasRole($request->current_role)) {
+                throw new \Exception("L'utilisateur sélectionné n'a pas le rôle requis.");
+            }
+
+            // Sauvegarder l'ancien état pour l'historique
+            $oldState = [
+                'gestionnaire_principal_id' => $client->gestionnaire_principal_id,
+                'responsable_paie_id' => $client->responsable_paie_id,
+                'binome_id' => $client->binome_id
+            ];
+
+            // Transférer le rôle spécifique
+            switch($request->current_role) {
+                case 'gestionnaire':
+                    $client->gestionnaire_principal_id = $toUser->id;
+                    break;
+                case 'responsable':
+                    $client->responsable_paie_id = $toUser->id;
+                    break;
+                case 'binome':
+                    $client->binome_id = $toUser->id;
+                    break;
+            }
+
             $client->save();
+
+            // Créer ou mettre à jour la fiche client
+            $ficheClient = FicheClient::updateOrCreate(
+                [
+                    'client_id' => $client->id,
+                    'periode_paie_id' => $request->periode_paie_id
+                ],
+                [
+                    'notes' => $this->formatTransferNotes($request->notes, $fromUser, $toUser, $request->current_role)
+                ]
+            );
+
+            // Créer un historique du transfert
+            ClientHistory::create([
+                'client_id' => $client->id,
+                'action' => 'transfer',
+                'old_state' => json_encode($oldState),
+                'new_state' => json_encode([
+                    'gestionnaire_principal_id' => $client->gestionnaire_principal_id,
+                    'responsable_paie_id' => $client->responsable_paie_id,
+                    'binome_id' => $client->binome_id
+                ]),
+                'user_id' => auth()->id(),
+                'notes' => "Transfert du rôle {$request->current_role} de {$fromUser->name} à {$toUser->name}"
+            ]);
+
+            // Envoyer les notifications
+            $toUser->notify(new ClientTransferNotification($client, $request->current_role, $fromUser));
+            $fromUser->notify(new ClientTransferNotification($client, $request->current_role, $toUser, true));
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Client transféré avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    private function formatTransferNotes(?string $additionalNotes, User $fromUser, User $toUser, string $role): string
+    {
+        $date = now()->format('d/m/Y H:i');
+        $baseNote = "[$date] Transfert du rôle $role de {$fromUser->name} à {$toUser->name}";
+        
+        if ($additionalNotes) {
+            return $baseNote . "\nNotes additionnelles : " . $additionalNotes;
+        }
+        
+        return $baseNote;
     }
 }

@@ -16,7 +16,11 @@ class PermissionController extends Controller
     }
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::query()
+            ->withCount('users')
+            ->orderBy('name')
+            ->paginate(10);
+            
         return view('admin.permissions.index', compact('permissions'));
     }
 

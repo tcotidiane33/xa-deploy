@@ -11,6 +11,8 @@ use OwenIt\Auditing\Auditable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Http\Request;
+use App\Notifications\ClientUserAssignmentNotification;
 
 class User extends Authenticatable implements AuditableContract
 {
@@ -174,5 +176,26 @@ class User extends Authenticatable implements AuditableContract
                 }
             }
         });
+    }
+
+    public function getAllClients()
+    {
+        return $this->clientsAsGestionnaire()
+            ->union($this->clientsAsResponsable())
+            ->union($this->clientsAsBinome())
+            ->get();
+    }
+
+    
+
+    public function notifyUserAssignment($user, $client, $role)
+    {
+        $notification = new ClientUserAssignmentNotification([
+            'client_name' => $client->name,
+            'role' => $role,
+            'assigned_at' => now()
+        ]);
+        
+        $user->notify($notification);
     }
 }

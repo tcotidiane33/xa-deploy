@@ -3,141 +3,107 @@
 @section('title', 'Détails de l\'utilisateur')
 
 @section('content')
-<div class=" text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm mt-1 px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700">
+<div class="container mx-auto px-4 py-8">
+    {{-- En-tête avec breadcrumbs --}}
+    <!-- <nav class="text-sm mb-4">
+        <ol class="list-none p-0 inline-flex">
+            @foreach($breadcrumbs as $breadcrumb)
+                <li class="flex items-center">
+                    <a href="{{ $breadcrumb['url'] }}" class="text-blue-600 hover:text-blue-800">{{ $breadcrumb['name'] }}</a>
+                    @if(!$loop->last)
+                        <svg class="w-3 h-3 mx-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    @endif
+                </li>
+            @endforeach
+        </ol>
+    </nav> -->
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Première colonne -->
-        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
-            <h1 class="text-xl font-bold">Détails de l'utilisateur</h1>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Nom</label>
-                <p class="bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg">{{ $user->name }}</p>
-            </div>
+        {{-- Informations de l'utilisateur --}}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                {{ $user->name }}
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Email</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->email }}</p>
+                </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                <p class="bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg">{{ $user->email }}</p>
-            </div>
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Rôles</label>
+                    <div class="mt-1 flex flex-wrap gap-2">
+                        @foreach($user->roles as $role)
+                            <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
+                                {{ $role->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Rôles</label>
-                <ul class="bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg">
-                    @foreach ($user->roles as $role)
-                        <li>{{ $role->name }}</li>
-                    @endforeach
-                </ul>
+                <div>
+                    <label class="text-sm font-medium text-gray-600">Date d'inscription</label>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->created_at->format('d/m/Y') }}</p>
+                </div>
             </div>
         </div>
 
-        <!-- Deuxième colonne -->
- !::        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
-            <h2 class="text-xl font-bold ">Clients rattachés</h2>
-            <form action="{{ route('admin.users.attachClient', $user) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="client_id">
-                        Ajouter un client
-                    </label>
-                    <select name="client_id" id="client_id" class="form-control bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg w-full" required>
-                        <option value="">Sélectionner un client</option>
-                        @foreach ($clients as $client)
-                            <option value="{{ $client->id }}">{{ $client->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
-                        Rôle
-                    </label>
-                    <select name="role" id="role" class="form-control bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg w-full" required>
-                        <option value="gestionnaire">Gestionnaire</option>
-                        <option value="binome">Binôme</option>
-                        <option value="responsable">Responsable</option>
-                    </select>
-                </div>
-                <div class="mb-4 flex items-end">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">Ajouter</button>
-                </div>
-            </form>
+        {{-- Clients gérés --}}
+        <div class="bg-white rounded-lg shadow-md p-6 md:col-span-2">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                Clients rattachés
+            </h2>
 
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-4">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="py-3 px-6">Nom</th>
-                        <th scope="col" class="py-3 px-6">Rôle</th>
-                        <th scope="col" class="py-3 px-6">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($user->clients as $client)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <td class="py-2 px-6">{{ $client->name }}</td>
-                            <td class="py-2 px-6">
-                                @if ($client->gestionnaire_principal_id == $user->id)
-                                    Gestionnaire
-                                @elseif ($client->binome_id == $user->id)
-                                    Binôme
-                                @elseif ($client->responsable_paie_id == $user->id)
-                                    Responsable
-                                @endif
-                            </td>
-                            <td class="py-2 px-6">
-                                <form action="{{ route('admin.users.detachClient', $user) }}" method="POST" style="display: inline-block;">
-                                    @csrf
-                                    <input type="hidden" name="client_id" value="{{ $client->id }}">
-                                    <input type="hidden" name="role" value="@if ($client->gestionnaire_principal_id == $user->id) gestionnaire @elseif ($client->binome_id == $user->id) binome @elseif ($client->responsable_paie_id == $user->id) responsable @endif">
-                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Retirer</button>
-                                </form>
-                            </td>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Troisième colonne -->
- !::        <div class="col-span-1 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg ">
-            <h2 class="text-xl font-bold ">Transférer des clients</h2>
-            <form action="{{ route('admin.users.transferClients', $user) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="new_user_id">
-                        Transférer à
-                    </label>
-                    <select name="new_user_id" id="new_user_id" class="form-control bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg w-full" required>
-                        <option value="">Sélectionner un utilisateur</option>
-                        @foreach ($users as $otherUser)
-                            @if ($otherUser->id !== $user->id)
-                                <option value="{{ $otherUser->id }}">{{ $otherUser->name }}</option>
-                            @endif
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($user->getAllClients() as $client)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ $client->name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $client->reference }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($client->gestionnaire_principal_id === $user->id)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Gestionnaire
+                                        </span>
+                                    @elseif($client->responsable_paie_id === $user->id)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            Responsable
+                                        </span>
+                                    @elseif($client->binome_id === $user->id)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Binôme
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('clients.show', $client) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Voir
+                                    </a>
+                                </td>
+                            </tr>
                         @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="client_ids">
-                        Clients à transférer
-                    </label>
-                    <select name="client_ids[]" id="client_ids" class="form-control bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg w-full" multiple required>
-                        @foreach ($user->clients as $client)
-                            <option value="{{ $client->id }}">{{ $client->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="role">
-                        Rôle
-                    </label>
-                    <select name="role" id="role" class="form-control bg-gray-100 text-gray-900 text-sm font-medium px-4 py-2 rounded-lg w-full" required>
-                        <option value="gestionnaire">Gestionnaire</option>
-                        <option value="binome">Binôme</option>
-                        <option value="responsable">Responsable</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 inline-block">Transférer</button>
-            </form>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

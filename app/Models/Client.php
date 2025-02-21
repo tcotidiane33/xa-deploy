@@ -346,5 +346,30 @@ class Client extends Model implements AuditableContract
         return $this->hasMany(FicheClient::class);
     }
 
+    public function attachUser($userId, $role)
+    {
+        // Attacher l'utilisateur avec le rôle dans la table pivot
+        $this->users()->attach($userId, [
+            'role' => $role,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Mettre à jour la colonne correspondante selon le rôle
+        switch ($role) {
+            case 'gestionnaire':
+                $this->gestionnaire_principal_id = $userId;
+                break;
+            case 'responsable':
+                $this->responsable_paie_id = $userId;
+                break;
+            case 'binome':
+                $this->binome_id = $userId;
+                break;
+        }
+        
+        $this->save();
+    }
+    
 
 }

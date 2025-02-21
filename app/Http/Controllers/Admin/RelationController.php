@@ -34,7 +34,7 @@ class RelationController extends Controller
 
         $clients = $clients->with(['gestionnairePrincipal', 'responsablePaie', 'histories'])->get();
 
-        return view('admin.clients.index', compact('clients'));
+        return view('admin.client_user.index', compact('clients'));
     }
     /**
      * Affiche la liste des clients avec leurs gestionnaires et responsables.
@@ -50,7 +50,7 @@ class RelationController extends Controller
         })->get();
     
         // Affiche la vue avec la liste des clients et des utilisateurs
-        return view('admin.clients.index', compact('clients', 'users'));
+        return view('admin.client_user.index', compact('clients', 'users'));
     }
 
     /**
@@ -84,7 +84,7 @@ class RelationController extends Controller
 
         // Valide la transaction
         DB::commit();
-        return redirect()->route('admin.clients.index')->with('success', 'Clients transférés avec succès.');
+        return redirect()->route('admin.client_user.index')->with('success', 'Clients transférés avec succès.');
     } catch (\Exception $e) {
         // En cas d'erreur, annule toutes les modifications
         DB::rollBack();

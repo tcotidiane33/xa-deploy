@@ -93,6 +93,12 @@
                         <li><a href="{{ route('admin.clients.index') }}"
                                 class="{{ request()->is('admin/clients') ? 'active' : '' }}">Gestion de Relations</a>
                         </li>
+                        <!-- Gestion des clients -->
+                        <li>
+                            <a href="{{ route('users.index') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-people-fill"></span><span class="mtext">Gestion des clients</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <!-- Conventions Collectives -->
@@ -119,7 +125,8 @@
                     <a href="{{ route('posts.index') }}" class="dropdown-toggle no-arrow">
                         <span class="micon bi bi-box"></span><span class="mtext">Posts</span>
                     </a>
-                </li> --}}
+                </li> 
+                
 
 
 

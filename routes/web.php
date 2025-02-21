@@ -133,7 +133,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::post('roles/assign', [RoleController::class, 'assignRoles'])->name('roles.assignRoles');
     Route::resource('permissions', PermissionController::class)->except(['show']);
     Route::resource('users', UserController::class);
-    Route::resource('clients', ClientController::class);
+    // Route::resource('clients', ClientController::class);
+        // Routes pour la gestion des clients par utilisateur
+        Route::get('/users/{user}/clients', [UserController::class, 'manageClients'])
+        ->name('users.manage_clients');
 
     Route::post('users/{user}/attach-client', [UserController::class, 'attachClient'])->name('users.attachClient');
     Route::post('users/{user}/detach-client', [UserController::class, 'detachClient'])->name('users.detachClient');
