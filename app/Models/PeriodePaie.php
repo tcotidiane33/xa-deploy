@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PeriodePaie extends Model
 {
@@ -11,10 +12,11 @@ class PeriodePaie extends Model
     protected $table = 'periodes_paie';
 
     protected $fillable = [
-        'reference', 'debut', 'fin', 'validee'
+        'reference', 'debut', 'fin', 'validee',  'status',  'created_at',
+        'updated_at'
     ];
 
-    protected $dates = ['debut', 'fin'];
+    protected $dates = ['debut', 'fin', 'created_at', 'updated_at'];
 
     protected $casts = [
         'debut' => 'date',
@@ -22,7 +24,22 @@ class PeriodePaie extends Model
         'validee' => 'boolean',
     ];
 
-    public function fichesClients()
+    public function fichesClients(): HasMany
+    {
+        return $this->hasMany(FicheClient::class);
+    }
+    /**
+     * Relation avec les traitements de paie
+     */
+    public function traitements(): HasMany
+    {
+        return $this->hasMany(TraitementPaie::class, 'periode_paie_id');
+    }
+
+    /**
+     * Relation avec les fiches clients
+     */
+    public function fichesClientsRelation(): HasMany
     {
         return $this->hasMany(FicheClient::class);
     }

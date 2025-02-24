@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">Créer un Client</h1>
-                    <form action="{{ route('admin.clients.store') }}" method="POST">
+                    <form action="{{ route('admin.client_user.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name">Nom du Client</label>

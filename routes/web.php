@@ -22,6 +22,8 @@ use App\Http\Controllers\TraitementPaieController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\ConventionCollectiveController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\BusinessBackupController;
 
 
 
@@ -134,8 +136,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::resource('permissions', PermissionController::class)->except(['show']);
     Route::resource('users', UserController::class);
     // Route::resource('clients', ClientController::class);
+    Route::resource('client_user', RelationController::class);
         // Routes pour la gestion des clients par utilisateur
-        Route::get('/users/{user}/clients', [UserController::class, 'manageClients'])
+    Route::get('/users/{user}/clients', [UserController::class, 'manageClients'])
         ->name('users.manage_clients');
 
     Route::post('users/{user}/attach-client', [UserController::class, 'attachClient'])->name('users.attachClient');
@@ -147,14 +150,21 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::get('/download-template', [FileController::class, 'downloadTemplate'])->name('files.downloadTemplate');
     Route::post('/upload-excel', [FileController::class, 'uploadExcel'])->name('files.uploadExcel');
     // Clients relations
-    Route::post('/clients/transfer', [RelationController::class, 'transfer'])->name('clients.transfer');
-    Route::get('/admin/clients/filter', [RelationController::class, 'filter'])->name('clients.filter');
-    Route::post('clients/{client}/attach-gestionnaire', [ClientController::class, 'attachGestionnaire'])->name('clients.attachGestionnaire');
-    Route::post('clients/{client}/detach-gestionnaire', [ClientController::class, 'detachGestionnaire'])->name('clients.detachGestionnaire');
+    Route::post('/client_user/transfer', [RelationController::class, 'transfer'])->name('client_user.transfer');
+    Route::get('/client_user/filter', [RelationController::class, 'filter'])->name('client_user.filter');
+    Route::post('client_user/{client_user}/attach-gestionnaire', [ClientController::class, 'attachGestionnaire'])->name('client_user.attachGestionnaire');
+    Route::post('client_user/{client_user}/detach-gestionnaire', [ClientController::class, 'detachGestionnaire'])->name('client_user.detachGestionnaire');
 
-    // Paramètres et gestion des rôles et permissions
+    // Routes pour les paramètres
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/settings/cache/clear', [SettingsController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::get('/settings/export', [SettingsController::class, 'export'])->name('settings.export');
+    Route::post('/settings/import', [SettingsController::class, 'import'])->name('settings.import');
+    
+    // Routes pour les paramètres par groupe
+    Route::get('/settings/{group}', [SettingsController::class, 'showGroup'])->name('settings.group');
+    Route::put('/settings/{group}', [SettingsController::class, 'updateGroup'])->name('settings.update-group');
 
     //période paie
     Route::post('/periodes-paie/{periodePaie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');
@@ -176,6 +186,37 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::get('/clockwork', function () {
         return redirect('/clockwork');
     })->name('clockwork');
+
+    Route::get('/relations/filter', [RelationController::class, 'filter'])->name('admin.client_user.filter');
+    Route::get('/relations', [RelationController::class, 'index'])->name('admin.client_user.index');
+    Route::get('/relations/create', [RelationController::class, 'create'])->name('admin.client_user.create');
+    Route::post('/relations', [RelationController::class, 'store'])->name('admin.client_user.store');
+    Route::get('/relations/{relation}', [RelationController::class, 'show'])->name('admin.client_user.show');
+    Route::get('/relations/{relation}/edit', [RelationController::class, 'edit'])->name('admin.client_user.edit');
+    Route::put('/relations/{relation}', [RelationController::class, 'update'])->name('admin.client_user.update');
+    Route::delete('/relations/{relation}', [RelationController::class, 'destroy'])->name('admin.client_user.destroy');
+
+    Route::get('client_user/{id}/edit', 'RelationController@edit')->name('client_user.edit');
+    Route::put('client_user/{id}', 'RelationController@update')->name('client_user.update');
+
+    // Routes pour les sauvegardes système
+    Route::prefix('backups')->name('backups.')->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::get('/create', [BackupController::class, 'create'])->name('create');
+        Route::get('/download/{fileName}', [BackupController::class, 'download'])->name('download');
+        Route::get('/delete/{fileName}', [BackupController::class, 'delete'])->name('delete');
+        Route::get('/clean', [BackupController::class, 'clean'])->name('clean');
+    });
+
+    // Routes pour les sauvegardes métier
+    Route::prefix('business-backups')->name('business-backups.')->group(function () {
+        Route::get('/', [BusinessBackupController::class, 'index'])->name('index');
+        Route::post('/', [BusinessBackupController::class, 'create'])->name('create');
+        Route::get('/download/{fileName}', [BusinessBackupController::class, 'download'])->name('download');
+        Route::post('/restore/{fileName}', [BusinessBackupController::class, 'restore'])->name('restore');
+        Route::delete('/{fileName}', [BusinessBackupController::class, 'delete'])->name('delete');
+    });
+
 });
 
 

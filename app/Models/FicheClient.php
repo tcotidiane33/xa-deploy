@@ -15,8 +15,11 @@ class FicheClient extends Model
     protected $table = 'fiches_clients';
 
     protected $fillable = [
-        'periode_paie_id',
         'client_id',
+        'periode_paie_id',
+        'gestionnaire_principal_id',
+        'responsable_paie_id',
+        'binome_id',
         'reception_variables',
         'reception_variables_file',
         'preparation_bp',
@@ -27,9 +30,9 @@ class FicheClient extends Model
         'preparation_envoie_dsn_file',
         'accuses_dsn',
         'accuses_dsn_file',
-        'notes',
         'nb_bulletins_file',
-        'maj_fiche_para_file'
+        'maj_fiche_para_file',
+        'notes'
     ];
 
     protected $dates = [

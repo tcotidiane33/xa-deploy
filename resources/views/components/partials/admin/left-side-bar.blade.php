@@ -1,7 +1,7 @@
 <div class="left-side-bar">
 
     <div class="brand-logo">
-        <a href="#">
+       <a href="#">
             <img src="{{ asset('backoffice/vendors/images/deskapp-logo.svg') }}" alt=""
                 class="dark-logo" />
             <img src="{{ asset('backoffice/vendors/images/deskapp-logo-white.svg') }}" alt=""
@@ -79,24 +79,41 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="{{ route('admin.dashboard') }}"
-                                class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">Panneau Admin</a></li>
+                                class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">
+                                <span class="micon bi bi-speedometer2"></span><span class="mtext ml-2">Panneau Admin</span>
+                            </a></li>
                         <li><a href="{{ route('admin.settings.index') }}"
-                                class="{{ request()->is('admin/settings') ? 'active' : '' }}">Paramétrage</a></li>
+                                class="{{ request()->is('admin/settings') ? 'active' : '' }}">
+                                <span class="micon bi bi-gear-fill"></span><span class="mtext ml-2">Paramétrage</span>
+                            </a></li>
                         <li><a href="{{ route('admin.activities.index') }}"
-                                class="{{ request()->is('admin/activities') ? 'active' : '' }}">Historiques
-                                activités</a></li>
-
+                                class="{{ request()->is('admin/activities') ? 'active' : '' }}">
+                                <span class="micon bi bi-activity"></span><span class="mtext ml-2">Historiques activités</span>
+                            </a></li>
                         <li><a href="{{ route('admin.roles.index') }}"
-                                class="{{ request()->is('admin/roles') ? 'active' : '' }}">Rôles</a></li>
+                                class="{{ request()->is('admin/roles') ? 'active' : '' }}">
+                                <span class="micon bi bi-person-badge"></span><span class="mtext ml-2">Rôles</span>
+                            </a></li>
                         <li><a href="{{ route('admin.permissions.index') }}"
-                                class="{{ request()->is('admin/permissions') ? 'active' : '' }}">Permissions</a></li>
-                        <li><a href="{{ route('admin.clients.index') }}"
-                                class="{{ request()->is('admin/clients') ? 'active' : '' }}">Gestion de Relations</a>
-                        </li>
-                        <!-- Gestion des clients -->
+                                class="{{ request()->is('admin/permissions') ? 'active' : '' }}">
+                                <span class="micon bi bi-shield-lock"></span><span class="mtext ml-2">Permissions</span>
+                            </a></li>
+                        <li><a href="{{ route('admin.client_user.index') }}"
+                                class="{{ request()->is('admin/client_user') ? 'active' : '' }}">
+                                <span class="micon bi bi-people-fill"></span><span class="mtext ml-2">Gestion des clients</span>
+                            </a></li>
                         <li>
-                            <a href="{{ route('users.index') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-people-fill"></span><span class="mtext">Gestion des clients</span>
+                            <a href="{{ route('admin.backups.index') }}"
+                                class="{{ request()->is('admin/backups*') ? 'active' : '' }}">
+                                <span class="micon bi bi-archive"></span>
+                                <span class="mtext ml-2">Sauvegardes système</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.business-backups.index') }}"
+                                class="{{ request()->is('admin/business-backups*') ? 'active' : '' }}">
+                                <span class="micon bi bi-database"></span>
+                                <span class="mtext ml-2">Sauvegardes métier</span>
                             </a>
                         </li>
                     </ul>
@@ -125,18 +142,14 @@
                     <a href="{{ route('posts.index') }}" class="dropdown-toggle no-arrow">
                         <span class="micon bi bi-box"></span><span class="mtext">Posts</span>
                     </a>
-                </li> 
-                
-
-
-
+                </li> --}}
             </ul>
         </div>
 
     </div>
 </div>
 
-{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+<!-- {{-- <script src="{{ asset('js/app.js') }}"></script> --}} -->
 <script>
     // Inclure les scripts JavaScript ici
     document.addEventListener('DOMContentLoaded', function() {

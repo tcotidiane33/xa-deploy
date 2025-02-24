@@ -152,6 +152,7 @@
             font-size: 0.875rem;
         }
     </style>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body>
@@ -160,12 +161,11 @@
     <div class="header">
         @include('components.partials.search-bar')
         @include('components.partials.header')
-
     </div>
 
-    {{-- // customeize App setting --}}
+    <!-- {{-- // customeize App setting --}} -->
     @include('components.partials.right-sidebar')
-    {{-- // left side bar  --}}
+    <!-- {{-- // left side bar  --}} -->
     @include('components.partials.admin.left-side-bar')
 
     <div class="mobile-menu-overlay"></div>
@@ -225,6 +225,7 @@
             </div>
             @yield('content')
         </div>
+
         <div class="menu-container">
             <div data-dial-init class="fixed right-6 bottom-6 group">
                 <div id="speed-dial-menu" class="flex flex-col items-center hidden mb-4 space-y-2">

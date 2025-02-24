@@ -341,6 +341,18 @@ class Client extends Model implements AuditableContract
 
         return ($completedSteps / $totalSteps) * 100;
     }
+
+    /**
+     * Récupère la fiche client la plus récente
+     */
+    public function currentFicheClient()
+    {
+        return $this->hasOne(FicheClient::class)->latest();
+    }
+
+    /**
+     * Récupère toutes les fiches clients
+     */
     public function fichesClients()
     {
         return $this->hasMany(FicheClient::class);
