@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\FicheClientActionNotification;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\DB;
 
 class PeriodePaieService
 {
@@ -122,21 +123,41 @@ class PeriodePaieService
 
     public function closePeriodePaie(PeriodePaie $periodePaie)
     {
-        $periodePaie->validee = true;
-        $periodePaie->save();
+        try {
+            DB::beginTransaction();
 
-        PeriodePaieHistory::create([
-            'periode_paie_id' => $periodePaie->id,
-            'user_id' => Auth::id(),
-            'action' => 'closed',
-            'details' => 'Période de paie clôturée',
-        ]);
+            // Créer une sauvegarde avant la clôture
+            $this->createBackup($periodePaie);
 
-        // Sauvegarder les fiches clients comme archives
-        $this->createFilesForClients($periodePaie);
+            $periodePaie->validee = true;
+            $periodePaie->save();
 
-        // Exporter les données des clients pour la période de paie
-        Excel::store(new ClientPeriodeExport($periodePaie), 'exports/clients_periode_' . $periodePaie->id . '.xlsx');
+            PeriodePaieHistory::create([
+                'periode_paie_id' => $periodePaie->id,
+                'user_id' => Auth::id(),
+                'action' => 'closed',
+                'details' => 'Période clôturée avec backup'
+            ]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    protected function createBackup(PeriodePaie $periodePaie)
+    {
+        $backup = [
+            'periode' => $periodePaie->toArray(),
+            'fiches_clients' => $periodePaie->fichesClients()->with('client')->get()->toArray(),
+            'created_at' => now()->format('Y-m-d H:i:s')
+        ];
+
+        $filename = 'backup_periode_' . $periodePaie->id . '_' . now()->format('Y-m-d_H-i-s') . '.json';
+        Storage::disk('backups')->put($filename, json_encode($backup, JSON_PRETTY_PRINT));
+
+        return $filename;
     }
 
     protected function createFilesForClients(PeriodePaie $periodePaie)
@@ -209,29 +230,41 @@ class PeriodePaieService
         ]);
     }
 
-    public function validatePeriodePaie(PeriodePaie $periodePaie)
+    public function validatePeriode(PeriodePaie $periodePaie)
     {
-        // Vérifiez que tous les traitements de paie sont complets avant de valider la période
-        $incompleteFiches = $periodePaie->fichesClients()->whereNull('accuses_dsn')->count();
+        try {
+            // Vérifier que tous les champs obligatoires sont remplis
+            $incompleteFiches = $periodePaie->fichesClients()
+                ->where(function ($query) {
+                    $query->whereNull('reception_variables')
+                        ->orWhereNull('preparation_bp')
+                        ->orWhereNull('validation_bp_client')
+                        ->orWhereNull('preparation_envoie_dsn')
+                        ->orWhereNull('accuses_dsn');
+                })->count();
 
-        if ($incompleteFiches > 0) {
-            return false;
+            if ($incompleteFiches > 0) {
+                throw new \Exception('Toutes les fiches clients doivent être complétées avant la validation.');
+            }
+
+            // Valider la période
+            $periodePaie->validee = true;
+            $periodePaie->save();
+
+            // Créer l'historique
+            PeriodePaieHistory::create([
+                'periode_paie_id' => $periodePaie->id,
+                'user_id' => Auth::id(),
+                'action' => 'validated',
+                'details' => 'Période validée et clôturée'
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la validation de la période : ' . $e->getMessage());
+            throw $e;
         }
-
-        $periodePaie->validee = true;
-        $periodePaie->save();
-
-        PeriodePaieHistory::create([
-            'periode_paie_id' => $periodePaie->id,
-            'user_id' => Auth::id(),
-            'action' => 'validated',
-            'details' => 'Période de paie validée',
-        ]);
-
-        return true;
     }
-
-
 
     public function encryptOldPeriods()
     {
@@ -293,5 +326,244 @@ class PeriodePaieService
         return Client::where('date_signature_contrat', '<=', $currentPeriod->fin)
             ->where('date_fin_prestation', '>=', $currentPeriod->debut)
             ->get();
+    }
+
+    public function migrateToPeriode(PeriodePaie $currentPeriode)
+    {
+        try {
+            // Vérifier qu'il n'y a pas d'autre période active
+            if (PeriodePaie::where('validee', false)
+                ->where('id', '!=', $currentPeriode->id)
+                ->exists()) {
+                throw new \Exception('Une autre période est déjà active.');
+            }
+
+            // Vérifier que toutes les fiches sont complètes
+            $incompleteFiches = $currentPeriode->fichesClients()
+                ->where(function ($query) {
+                    $query->whereNull('reception_variables')
+                        ->orWhereNull('preparation_bp')
+                        ->orWhereNull('validation_bp_client')
+                        ->orWhereNull('preparation_envoie_dsn')
+                        ->orWhereNull('accuses_dsn');
+                })->count();
+
+            if ($incompleteFiches > 0) {
+                throw new \Exception('Toutes les fiches clients doivent être complétées avant la migration.');
+            }
+
+            // Créer la nouvelle période
+            $newPeriode = PeriodePaie::create([
+                'debut' => $currentPeriode->fin->addDay(),
+                'fin' => $currentPeriode->fin->addMonth(),
+                'validee' => false,
+                'reference' => 'PERIODE_' . $currentPeriode->fin->addDay()->format('F_Y')
+            ]);
+
+            // Copier les données persistantes
+            foreach ($currentPeriode->fichesClients as $ficheClient) {
+                FicheClient::create([
+                    'client_id' => $ficheClient->client_id,
+                    'periode_paie_id' => $newPeriode->id,
+                    'notes' => $ficheClient->notes,
+                    'nb_bulletins' => $ficheClient->nb_bulletins,
+                    'maj_fiche_para' => $ficheClient->maj_fiche_para
+                ]);
+            }
+
+            // Clôturer l'ancienne période
+            $currentPeriode->validee = true;
+            $currentPeriode->save();
+
+            // Créer l'historique
+            PeriodePaieHistory::create([
+                'periode_paie_id' => $currentPeriode->id,
+                'user_id' => Auth::id(),
+                'action' => 'migrated',
+                'details' => 'Migration vers la nouvelle période ' . $newPeriode->reference
+            ]);
+
+            return $newPeriode;
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la migration : ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function migrateAllClientsToNewPeriode(PeriodePaie $currentPeriode)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Vérifier que la période actuelle est complète
+            $incompleteFiches = $currentPeriode->fichesClients()
+                ->where(function ($query) {
+                    $query->whereNull('reception_variables')
+                        ->orWhereNull('preparation_bp')
+                        ->orWhereNull('validation_bp_client')
+                        ->orWhereNull('preparation_envoie_dsn')
+                        ->orWhereNull('accuses_dsn');
+                })->count();
+
+            if ($incompleteFiches > 0) {
+                throw new \Exception('Certaines fiches clients sont incomplètes. Impossible de migrer.');
+            }
+
+            // Créer la nouvelle période
+            $newPeriode = PeriodePaie::create([
+                'debut' => $currentPeriode->fin->addDay(),
+                'fin' => $currentPeriode->fin->addMonth(),
+                'validee' => false,
+                'reference' => 'PERIODE_' . $currentPeriode->fin->addDay()->format('F_Y')
+            ]);
+
+            // Récupérer tous les clients actifs
+            $clients = Client::where('actif', true)->get();
+
+            // Migrer chaque client
+            foreach ($clients as $client) {
+                $oldFiche = FicheClient::where('client_id', $client->id)
+                    ->where('periode_paie_id', $currentPeriode->id)
+                    ->first();
+
+                // Créer une nouvelle fiche client avec les données persistantes
+                FicheClient::create([
+                    'client_id' => $client->id,
+                    'periode_paie_id' => $newPeriode->id,
+                    'notes' => $oldFiche ? $oldFiche->notes : null,
+                    'nb_bulletins' => $client->nb_bulletins,
+                    'maj_fiche_para' => $client->maj_fiche_para
+                ]);
+            }
+
+            // Clôturer l'ancienne période
+            $currentPeriode->validee = true;
+            $currentPeriode->save();
+
+            // Créer l'historique
+            PeriodePaieHistory::create([
+                'periode_paie_id' => $currentPeriode->id,
+                'user_id' => Auth::id(),
+                'action' => 'mass_migration',
+                'details' => 'Migration en masse vers la nouvelle période ' . $newPeriode->reference
+            ]);
+
+            DB::commit();
+            return $newPeriode;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur lors de la migration en masse : ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function migrateSelectedClients($clients)
+    {
+        try {
+            DB::beginTransaction();
+
+            $currentPeriode = PeriodePaie::where('validee', false)
+                ->whereDate('fin', '>=', now())
+                ->first();
+
+            if (!$currentPeriode) {
+                // Créer une nouvelle période si aucune n'est active
+                $currentPeriode = PeriodePaie::create([
+                    'debut' => now()->startOfMonth(),
+                    'fin' => now()->endOfMonth(),
+                    'validee' => false,
+                    'reference' => 'PERIODE_' . now()->format('F_Y')
+                ]);
+            }
+
+            foreach ($clients as $client) {
+                // Vérifier si le client n'a pas déjà une fiche pour cette période
+                $existingFiche = FicheClient::where('client_id', $client->id)
+                    ->where('periode_paie_id', $currentPeriode->id)
+                    ->exists();
+
+                if (!$existingFiche && $client->date_fin_prestation > now()) {
+                    FicheClient::create([
+                        'client_id' => $client->id,
+                        'periode_paie_id' => $currentPeriode->id,
+                        'notes' => '',
+                        'reception_variables' => null,
+                        'preparation_bp' => null,
+                        'validation_bp_client' => null,
+                        'preparation_envoie_dsn' => null,
+                        'accuses_dsn' => null
+                    ]);
+                }
+            }
+
+            PeriodePaieHistory::create([
+                'periode_paie_id' => $currentPeriode->id,
+                'user_id' => Auth::id(),
+                'action' => 'selective_migration',
+                'details' => 'Migration sélective des clients actifs'
+            ]);
+
+            DB::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur lors de la migration sélective : ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function migrateClients($clients)
+    {
+        try {
+            DB::beginTransaction();
+
+            $currentPeriode = PeriodePaie::where('validee', false)
+                ->whereDate('fin', '>=', now())
+                ->first();
+
+            if (!$currentPeriode) {
+                $currentPeriode = PeriodePaie::create([
+                    'debut' => now()->startOfMonth(),
+                    'fin' => now()->endOfMonth(),
+                    'reference' => 'PERIODE_' . now()->format('Y_m'),
+                    'validee' => false
+                ]);
+            }
+
+            foreach ($clients as $client) {
+                $existingFiche = FicheClient::where('client_id', $client->id)
+                    ->where('periode_paie_id', $currentPeriode->id)
+                    ->exists();
+
+                if (!$existingFiche) {
+                    FicheClient::create([
+                        'client_id' => $client->id,
+                        'periode_paie_id' => $currentPeriode->id,
+                        'reception_variables' => null,
+                        'preparation_bp' => null,
+                        'validation_bp_client' => null,
+                        'preparation_envoie_dsn' => null,
+                        'accuses_dsn' => null,
+                        'notes' => ''
+                    ]);
+                }
+            }
+
+            PeriodePaieHistory::create([
+                'user_id' => Auth::id(),
+                'periode_paie_id' => $currentPeriode->id,
+                'action' => 'migration',
+                'details' => 'Migration de ' . $clients->count() . ' clients'
+            ]);
+
+            DB::commit();
+            return true;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }

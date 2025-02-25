@@ -167,7 +167,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::put('/settings/{group}', [SettingsController::class, 'updateGroup'])->name('settings.update-group');
 
     //période paie
-    Route::post('/periodes-paie/{periodePaie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');
+    Route::post('/periodes-paie/{periodes_paie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');
     Route::patch('periodes-paie/{id}/cloturer', [PeriodePaieController::class, 'cloturer'])->name('periodes-paie.cloturer');
     Route::patch('periodes-paie/{id}/decloturer', [PeriodePaieController::class, 'decloturer'])->name('periodes-paie.decloturer');
 
@@ -212,7 +212,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::prefix('business-backups')->name('business-backups.')->group(function () {
         Route::get('/', [BusinessBackupController::class, 'index'])->name('index');
         Route::post('/', [BusinessBackupController::class, 'create'])->name('create');
-        Route::get('/download/{fileName}', [BusinessBackupController::class, 'download'])->name('download');
+        Route::get('/preview/{fileName}', [BusinessBackupController::class, 'preview'])->name('preview');
+        Route::get('/download/{fileName}/{format?}', [BusinessBackupController::class, 'download'])->name('download');
         Route::post('/restore/{fileName}', [BusinessBackupController::class, 'restore'])->name('restore');
         Route::delete('/{fileName}', [BusinessBackupController::class, 'delete'])->name('delete');
     });

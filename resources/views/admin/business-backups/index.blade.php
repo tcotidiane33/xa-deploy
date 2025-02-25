@@ -1,206 +1,194 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mx-auto p-4">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Sauvegardes des données métier</h1>
-        
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header and New Backup Button -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">Sauvegardes des données métier</h1>
         <button 
-            onclick="document.getElementById('createBackupModal').classList.remove('hidden')"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            x-data="{}"
+            @click="$dispatch('open-modal', 'createBackupModal')"
+            class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center justify-center gap-2"
         >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
             Nouvelle sauvegarde
         </button>
     </div>
 
+    <!-- Success and Error Messages -->
     @if(session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-            {{ session('success') }}
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <p class="text-green-700">{{ session('success') }}</p>
+            </div>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-            {{ session('error') }}
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                <p class="text-red-700">{{ session('error') }}</p>
+            </div>
         </div>
     @endif
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fichier
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Type de données
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Taille
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date de création
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($backups as $backup)
+    <!-- Backups Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $backup['file_name'] }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $backup['type'] }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ round($backup['file_size'] / 1024, 2) }} KB
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {{ \Carbon\Carbon::createFromTimestamp($backup['last_modified'])->format('d/m/Y H:i:s') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                            <button 
-                                onclick="showRestoreModal('{{ $backup['file_name'] }}')"
-                                class="text-blue-600 hover:text-blue-900"
-                            >
-                                Restaurer
-                            </button>
-                            <a 
-                                href="{{ route('admin.business-backups.download', $backup['file_name']) }}"
-                                class="text-green-600 hover:text-green-900"
-                            >
-                                Télécharger
-                            </a>
-                            <form 
-                                action="{{ route('admin.business-backups.delete', $backup['file_name']) }}" 
-                                method="POST" 
-                                class="inline"
-                            >
-                                @csrf
-                                @method('DELETE')
-                                <button 
-                                    type="submit" 
-                                    class="text-red-600 hover:text-red-900"
-                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde ?')"
-                                >
-                                    Supprimer
-                                </button>
-                            </form>
-                        </td>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Fichier</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Type</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Taille</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Actions</th>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            Aucune sauvegarde disponible
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($backups as $backup)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 truncate max-w-[200px]" title="{{ $backup['file_name'] }}">
+                                {{ $backup['file_name'] }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $backup['type'] }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ round($backup['file_size'] / 1024, 2) }} KB
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ \Carbon\Carbon::createFromTimestamp($backup['last_modified'])->format('d/m/Y H:i') }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex flex-wrap gap-2">
+                                    <!-- Restore Button -->
+                                    <button 
+                                        x-data="{}"
+                                        @click="$dispatch('open-modal', { id: 'restoreModal', fileName: '{{ $backup['file_name'] }}' })"
+                                        class="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        Restaurer
+                                    </button>
 
-<!-- Modal de création de sauvegarde -->
-<div id="createBackupModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Nouvelle sauvegarde</h3>
-            <form action="{{ route('admin.business-backups.create') }}" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <input type="checkbox" name="backup_clients" id="backup_clients" class="mr-2" checked>
-                        <label for="backup_clients">Clients</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="backup_fiches" id="backup_fiches" class="mr-2" checked>
-                        <label for="backup_fiches">Fiches clients</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="backup_periodes" id="backup_periodes" class="mr-2" checked>
-                        <label for="backup_periodes">Périodes de paie</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="backup_traitements" id="backup_traitements" class="mr-2" checked>
-                        <label for="backup_traitements">Traitements de paie</label>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end space-x-2">
-                    <button 
-                        type="button"
-                        onclick="document.getElementById('createBackupModal').classList.add('hidden')"
-                        class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
-                    >
-                        Annuler
-                    </button>
-                    <button 
-                        type="submit"
-                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        Créer la sauvegarde
-                    </button>
-                </div>
-            </form>
+                                    <!-- Download Dropdown -->
+                                    <div class="relative">
+                                        <button class="text-green-600 hover:text-green-900 flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                            </svg>
+                                            Télécharger
+                                        </button>
+                                        <ul class="dropdown-menu absolute hidden bg-white rounded-lg shadow-lg mt-2 right-0">
+                                            <li>
+                                                <a href="{{ route('admin.business-backups.download', [$backup['file_name'], 'format' => 'json']) }}" 
+                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">JSON</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('admin.business-backups.download', [$backup['file_name'], 'format' => 'csv']) }}" 
+                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">CSV</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('admin.business-backups.download', [$backup['file_name'], 'format' => 'xlsx']) }}" 
+                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Excel</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('admin.business-backups.download', [$backup['file_name'], 'format' => 'pdf']) }}" 
+                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">PDF</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Preview Button -->
+                                    <button 
+                                        onclick="window.location.href='{{ route('admin.business-backups.preview', $backup['file_name']) }}'"
+                                        class="text-purple-600 hover:text-purple-900 flex items-center gap-1"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        Prévisualiser
+                                    </button>
+
+                                    <!-- Delete Form -->
+                                    <form 
+                                        action="{{ route('admin.business-backups.delete', $backup['file_name']) }}" 
+                                        method="POST" 
+                                        class="inline"
+                                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde ?')"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button 
+                                            type="submit" 
+                                            class="text-red-600 hover:text-red-900 flex items-center gap-1"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-4 text-center text-gray-500 italic">
+                                Aucune sauvegarde disponible
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Modal de restauration -->
-<div id="restoreModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <div class="mt-3">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Restaurer la sauvegarde</h3>
-            <form id="restoreForm" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <input type="checkbox" name="restore_clients" id="restore_clients" class="mr-2" checked>
-                        <label for="restore_clients">Clients</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="restore_fiches" id="restore_fiches" class="mr-2" checked>
-                        <label for="restore_fiches">Fiches clients</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="restore_periodes" id="restore_periodes" class="mr-2" checked>
-                        <label for="restore_periodes">Périodes de paie</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="restore_traitements" id="restore_traitements" class="mr-2" checked>
-                        <label for="restore_traitements">Traitements de paie</label>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end space-x-2">
-                    <button 
-                        type="button"
-                        onclick="document.getElementById('restoreModal').classList.add('hidden')"
-                        class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
-                    >
-                        Annuler
-                    </button>
-                    <button 
-                        type="submit"
-                        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    >
-                        Restaurer
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+@include('admin.business-backups.modals.create')
+@include('admin.business-backups.modals.restore')
 
 @push('scripts')
+<script src="//unpkg.com/alpinejs" defer></script>
 <script>
-function showRestoreModal(fileName) {
-    const modal = document.getElementById('restoreModal');
-    const form = document.getElementById('restoreForm');
-    form.action = `{{ route('admin.business-backups.restore', '') }}/${fileName}`;
-    modal.classList.remove('hidden');
-}
+document.addEventListener('alpine:init', () => {
+    Alpine.data('modal', () => ({
+        open: false,
+        fileName: null,
+        init() {
+            this.$watch('open', (value) => {
+                if (value) {
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
+        },
+        toggle() {
+            this.open = !this.open;
+        }
+    }));
+});
 </script>
 @endpush
-@endsection 
+
+@push('styles')
+<style>
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+</style>
+@endpush
+@endsection
