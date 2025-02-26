@@ -31,7 +31,8 @@ return [
                 'local',
                 's3', // Si vous utilisez Amazon S3
             ],
-            'compression_method' => 'zip', // Ajoutez cette ligne
+            // 'compression_method' => 'zip', // Ajoutez cette ligne
+            'compression_method' => \ZipArchive::CM_DEFAULT, // Utilisez une constante entière pour la méthode de compression
             'compression_level' => 9, // Ajoutez cette ligne (niveau de compression, de 0 à 9)
         ],
 
@@ -56,6 +57,8 @@ return [
 
         'mail' => [
             'to' => env('BACKUP_NOTIFICATION_EMAIL'),
+            // 'to' => null, // Désactive les notifications par e-mail
+
         ],
     ],
 

@@ -34,7 +34,7 @@ return [
     */
 
     'mailers' => [
-        'smtp' => [
+        /*'smtp' => [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
             'port' => env('MAIL_PORT', 587),
@@ -43,6 +43,19 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
+        ],
+
+        Si vous ne parvenez pas à configurer Gmail correctement, vous pouvez utiliser un autre service de messagerie comme Mailtrap (pour le développement) ou SendGrid (pour la production).
+*/
+        'smtp' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST', 'smtp.gmail.com'),
+            'port' => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
         ],
 
         'ses' => [
