@@ -26,7 +26,6 @@ use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\BusinessBackupController;
 
 
-
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -76,15 +75,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('materials/{id}/export/pdf', [MaterialController::class, 'exportPDF'])->name('materials.export.pdf');
 
     Route::resource('periodes-paie', PeriodePaieController::class);
-    // Route::get('/periodes-paie', [PeriodePaieController::class, 'index'])->name('periodes-paie.index');
-    // Route::get('/periodes-paie/create', [PeriodePaieController::class, 'create'])->name('periodes-paie.create');
-    // Route::post('/periodes-paie', [PeriodePaieController::class, 'store'])->name('periodes-paie.store');
-    // Route::get('/periodes-paie/{periodePaie}', [PeriodePaieController::class, 'show'])->name('periodes-paie.show');
-    // Route::get('/periodes-paie/{periodePaie}/edit', [PeriodePaieController::class, 'edit'])->name('periodes-paie.edit');
-    // Route::put('/periodes-paie/{periodePaie}', [PeriodePaieController::class, 'update'])->name('periodes-paie.update');
-    // Route::delete('/periodes-paie/{periodePaie}', [PeriodePaieController::class, 'destroy'])->name('periodes-paie.destroy');
-    Route::patch('periodes-paie/update-field', [PeriodePaieController::class, 'updateField'])->name('periodes-paie.updateField');
-    Route::get('periodes-paie/{id}/info', [PeriodePaieController::class, 'getInfo'])->name('periodes-paie.info');
+    Route::patch('periodes-paie/{periodes_paie}/cloturer', [PeriodePaieController::class, 'cloturer'])->name('periodes-paie.cloturer');
+    Route::patch('periodes-paie/{periodes_paie}/decloturer', [PeriodePaieController::class, 'decloturer'])->name('periodes-paie.decloturer');
+    Route::patch('/periodes-paie/migrate', [PeriodePaieController::class, 'migrateAllClients'])->name('periodes-paie.migrate');
 
     Route::resource('fiches-clients', FicheClientController::class);
     // Routes éclatées pour FicheClientController
@@ -161,15 +154,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::get('/settings/cache/clear', [SettingsController::class, 'clearCache'])->name('settings.clear-cache');
     Route::get('/settings/export', [SettingsController::class, 'export'])->name('settings.export');
     Route::post('/settings/import', [SettingsController::class, 'import'])->name('settings.import');
-    
+
     // Routes pour les paramètres par groupe
     Route::get('/settings/{group}', [SettingsController::class, 'showGroup'])->name('settings.group');
     Route::put('/settings/{group}', [SettingsController::class, 'updateGroup'])->name('settings.update-group');
 
     //période paie
     Route::post('/periodes-paie/{periodes_paie}/valider', [PeriodePaieController::class, 'valider'])->name('periodes-paie.valider');
-    Route::patch('periodes-paie/{id}/cloturer', [PeriodePaieController::class, 'cloturer'])->name('periodes-paie.cloturer');
-    Route::patch('periodes-paie/{id}/decloturer', [PeriodePaieController::class, 'decloturer'])->name('periodes-paie.decloturer');
+    Route::patch('/periodes-paie/{periodes_paie}/cloturer', [PeriodePaieController::class, 'cloturer'])->name('periodes-paie.cloturer');
+    Route::patch('/periodes-paie/{periodes_paie}/decloturer', [PeriodePaieController::class, 'decloturer'])->name('periodes-paie.decloturer');
 
     //User Acces
     Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assign-role');

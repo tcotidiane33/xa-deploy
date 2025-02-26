@@ -111,6 +111,29 @@ class FicheClient extends Model
         return $this->belongsTo(PeriodePaie::class);
     }
 
+    public function isPeriodeActive()
+    {
+        return $this->periodePaie && !$this->periodePaie->validee;
+    }
+
+    public function clearFieldsIfPeriodeExpired()
+    {
+        if (!$this->isPeriodeActive()) {
+            $this->reception_variables = null;
+            $this->reception_variables_file = null;
+            $this->preparation_bp = null;
+            $this->preparation_bp_file = null;
+            $this->validation_bp_client = null;
+            $this->validation_bp_client_file = null;
+            $this->preparation_envoie_dsn = null;
+            $this->preparation_envoie_dsn_file = null;
+            $this->accuses_dsn = null;
+            $this->accuses_dsn_file = null;
+            $this->nb_bulletins_file = null;
+            $this->maj_fiche_para_file = null;
+            $this->save();
+        }
+    }
 
     public function traitementPaie()
     {

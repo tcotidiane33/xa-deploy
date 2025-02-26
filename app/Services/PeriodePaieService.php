@@ -121,6 +121,16 @@ class PeriodePaieService
         ]);
     }
 
+    /**
+     * Clôturer la période de paie.
+     *
+     * Cette méthode crée une sauvegarde des données de la période de paie avant de la clôturer.
+     * Les données de la période de paie et des fiches clients sont sauvegardées dans le système de backup.
+     * Après la clôture, les informations sont renouvelées pour la nouvelle période.
+     *
+     * @param PeriodePaie $periodePaie
+     * @throws \Exception
+     */
     public function closePeriodePaie(PeriodePaie $periodePaie)
     {
         try {
@@ -128,6 +138,9 @@ class PeriodePaieService
 
             // Créer une sauvegarde avant la clôture
             $this->createBackup($periodePaie);
+
+            // Vider les colonnes spécifiées des fiches clients
+            $this->clearFicheClientColumns($periodePaie);
 
             $periodePaie->validee = true;
             $periodePaie->save();
@@ -146,6 +159,40 @@ class PeriodePaieService
         }
     }
 
+    /**
+     * Vider les colonnes spécifiées des fiches clients.
+     *
+     * @param PeriodePaie $periodePaie
+     */
+    protected function clearFicheClientColumns(PeriodePaie $periodePaie)
+    {
+        foreach ($periodePaie->fichesClients as $ficheClient) {
+            $ficheClient->update([
+                'reception_variables' => null,
+                'reception_variables_file' => null,
+                'preparation_bp' => null,
+                'preparation_bp_file' => null,
+                'validation_bp_client' => null,
+                'validation_bp_client_file' => null,
+                'preparation_envoie_dsn' => null,
+                'preparation_envoie_dsn_file' => null,
+                'accuses_dsn' => null,
+                'accuses_dsn_file' => null,
+                'nb_bulletins_file' => null,
+                'maj_fiche_para_file' => null,
+            ]);
+        }
+    }
+
+    /**
+     * Créer une sauvegarde des données de la période de paie.
+     *
+     * Cette méthode sauvegarde les données de la période de paie et des fiches clients associées
+     * dans le système de backup (Laravel Backup).
+     *
+     * @param PeriodePaie $periodePaie
+     * @return string
+     */
     protected function createBackup(PeriodePaie $periodePaie)
     {
         $backup = [
