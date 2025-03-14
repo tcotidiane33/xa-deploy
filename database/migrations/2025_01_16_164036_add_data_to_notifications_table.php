@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->json('data')->nullable()->after('type');
+            $table->json('data')->nullable();
         });
     }
 
