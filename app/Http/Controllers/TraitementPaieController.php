@@ -23,28 +23,35 @@ class TraitementPaieController extends Controller
     {
         $this->traitementPaieService = $traitementPaieService;
     }
+/*
+    public function index(Request $request)
+    {
+        $traitements = TraitementPaie::with(['client', 'gestionnaire', 'periodePaie'])->paginate(15);
+        // / Récupérer la période de paie en cours
+        $currentPeriodePaie = PeriodePaie::where('validee', false)->latest()->first();
 
-    // public function index(Request $request)
-    // {
-    //     $traitements = TraitementPaie::with(['client', 'gestionnaire', 'periodePaie'])->paginate(15);
-    //     // / Récupérer la période de paie en cours
-    //     $currentPeriodePaie = PeriodePaie::where('validee', false)->latest()->first();
+        // Récupérer toutes les fiches clients associées à la période de paie en cours
+        $fichesClients = FicheClient::where('periode_paie_id', $currentPeriodePaie->id)
+                                    ->with(['client', 'periodePaie'])
+                                    ->paginate(15);
 
-    //     // Récupérer toutes les fiches clients associées à la période de paie en cours
-    //     $fichesClients = FicheClient::where('periode_paie_id', $currentPeriodePaie->id)
-    //                                 ->with(['client', 'periodePaie'])
-    //                                 ->paginate(15);
-
-    //     return view('traitements_paie.index', compact('fichesClients', 'currentPeriodePaie','traitements'));
-    // }
+        return view('traitements_paie.index', compact('fichesClients', 'currentPeriodePaie','traitements'));
+    }
+*/
     public function index()
     {
         $periodePaieEnCours = PeriodePaie::where('validee', false)->first();
-        $fichesClients = FicheClient::where('periode_paie_id', $periodePaieEnCours->id)->paginate(15);
-        $tickets = Ticket::latest()->take(5)->get(); 
-    $posts = Post::latest()->take(5)->get(); 
 
-        return view('traitements_paie.index', compact('fichesClients', 'posts','tickets'));
+        if (!$periodePaieEnCours) {
+            return redirect()->route('traitements-paie.index')
+                ->with('error', 'Aucune période de paie en cours trouvée.');
+        }
+
+        $fichesClients = FicheClient::where('periode_paie_id', $periodePaieEnCours->id)->paginate(15);
+        $tickets = Ticket::latest()->take(5)->get();
+        $posts = Post::latest()->take(5)->get();
+
+        return view('traitements_paie.index', compact('fichesClients', 'posts', 'tickets'));
     }
     public function create()
     {

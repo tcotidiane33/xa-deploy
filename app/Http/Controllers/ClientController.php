@@ -35,7 +35,7 @@ class ClientController extends Controller
     {
         $this->clientService = $clientService;
     }
-       public function index(Request $request)
+    public function index(Request $request)
     {
         $clients = $this->clientService->getClients($request)->paginate(10); // Utilisez la pagination ici
         $clientsCount = Client::count(); // Exemple de données
