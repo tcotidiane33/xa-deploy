@@ -36,7 +36,10 @@ return new class extends Migration
             $table->string('gestionnaire_telephone_ld')->nullable();
             $table->string('binome_telephone_ld')->nullable();
             $table->boolean('saisie_variables')->default(false);
-            $table->boolean('client_forme_saisie')->default(false)->change();
+            // $table->boolean('client_forme_saisie')->default(false)->change();
+            if (!Schema::hasColumn('clients', 'client_forme_saisie')) {
+                $table->boolean('client_forme_saisie')->default(false);
+            }
             $table->date('date_formation_saisie')->nullable();
             $table->date('date_fin_prestation')->nullable();
             $table->date('date_signature_contrat')->nullable();

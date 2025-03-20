@@ -185,7 +185,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::get('/relations/create', [RelationController::class, 'create'])->name('admin.client_user.create');
     Route::post('/relations', [RelationController::class, 'store'])->name('admin.client_user.store');
     Route::get('/relations/{relation}', [RelationController::class, 'show'])->name('admin.client_user.show');
-    // Route::get('/relations/{relation}/edit', [RelationController::class, 'edit'])->name('admin.client_user.edit');
+    Route::get('/relations/{relation}/edit', [RelationController::class, 'edit'])->name('admin.client_user.edit');
     Route::put('/relations/{relation}', [RelationController::class, 'update'])->name('admin.client_user.update');
     Route::delete('/relations/{relation}', [RelationController::class, 'destroy'])->name('admin.client_user.destroy');
 

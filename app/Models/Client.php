@@ -123,7 +123,7 @@ class Client extends Model implements AuditableContract
         $gestionnaire = $this->gestionnairePrincipal;
         $client = $this;
 
-        Mail::to($client->email)->cc($gestionnaire->email)->send(new ClientAcknowledgementMail($gestionnaire, $client));
+        // Mail::to($client->email)->cc($gestionnaire->email)->send(new ClientAcknowledgementMail($gestionnaire, $client));
 
         // $data = [
         //     'managerName' => $gestionnaire->name,
@@ -379,9 +379,9 @@ class Client extends Model implements AuditableContract
                 $this->binome_id = $userId;
                 break;
         }
-        
+
         $this->save();
     }
-    
+
 
 }
