@@ -19,6 +19,12 @@ class ClientForm extends Component
 
     public function mount($clientId = null)
     {
+        // Initialisation des valeurs booléennes
+        $this->saisie_variables = false;
+        $this->client_forme_saisie = false;
+        $this->adhesion_mydrh = false;
+        $this->is_cabinet = false;
+
         if ($clientId) {
             $this->loadClient($clientId);
         }
@@ -65,11 +71,11 @@ class ClientForm extends Component
 
     public function render()
     {
-        $responsables = User::whereHas('roles', function($query) {
+        $responsables = User::whereHas('roles', function ($query) {
             $query->where('name', 'responsable');
         })->get();
 
-        $gestionnaires = User::whereHas('roles', function($query) {
+        $gestionnaires = User::whereHas('roles', function ($query) {
             $query->where('name', 'gestionnaire');
         })->get();
 
@@ -118,20 +124,33 @@ class ClientForm extends Component
                 'binome_id' => $this->binome_id,
                 'convention_collective_id' => $this->convention_collective_id,
                 'maj_fiche_para' => $this->maj_fiche_para,
-                'saisie_variables' => $this->saisie_variables,
+                // 'saisie_variables' => $this->saisie_variables,
+                'saisie_variables' => $this->saisie_variables ?? false,
+
                 'date_saisie_variables' => $this->date_saisie_variables,
-                'client_forme_saisie' => $this->client_forme_saisie,
+                // 'client_forme_saisie' => $this->client_forme_saisie,
+                'client_forme_saisie' => $this->client_forme_saisie ?? false,
+
                 'date_formation_saisie' => $this->date_formation_saisie,
                 'date_debut_prestation' => $this->date_debut_prestation,
                 'date_fin_prestation' => $this->date_fin_prestation,
                 'date_signature_contrat' => $this->date_signature_contrat,
                 'date_rappel_mail' => $this->date_rappel_mail,
                 'taux_at' => $this->taux_at,
-                'adhesion_mydrh' => $this->adhesion_mydrh,
+                // 'adhesion_mydrh' => $this->adhesion_mydrh,
+                'adhesion_mydrh' => $this->adhesion_mydrh ?? false,
+
                 'date_adhesion_mydrh' => $this->date_adhesion_mydrh,
-                'is_cabinet' => $this->is_cabinet,
+                // 'is_cabinet' => $this->is_cabinet,
+                'is_cabinet' => $this->is_cabinet ?? false,
+
                 'portfolio_cabinet_id' => $this->portfolio_cabinet_id,
             ]
+        );
+
+        $client = Client::updateOrCreate(
+            ['id' => $this->client_id],
+            $this->except('client_id')
         );
 
         session()->flash('message', 'Client enregistré avec succès.');

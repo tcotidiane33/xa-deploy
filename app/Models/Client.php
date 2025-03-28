@@ -93,6 +93,12 @@ class Client extends Model implements AuditableContract
         'gestionnaires_secondaires' => 'array',
     ];
 
+        protected $attributes = [
+        'saisie_variables' => false,
+        'client_forme_saisie' => false,
+        'adhesion_mydrh' => false,
+        'is_cabinet' => false
+    ];
     //email.JS
     protected static function boot()
     {
@@ -214,7 +220,7 @@ class Client extends Model implements AuditableContract
         return $this->belongsTo(User::class, 'binome_id');
     }
 
-        
+
     public function conventionCollective()
     {
         return $this->belongsTo(ConventionCollective::class, 'convention_collective_id');
