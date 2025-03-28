@@ -42,19 +42,7 @@
                         <span class="micon bi bi-person-fill"></span><span class="mtext">Fiches Clients</span>
                     </a>
                 </li>
-                <!-- Matériels -->
-                <li>
-                    <a href="{{ route('materials.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-box-seam"></span><span class="mtext">Matériels</span>
-                    </a>
-                </li>
-                <!-- Conention -->
-                <li>
-                    <a href="{{ route('convention-collectives.index') }}" class="dropdown-toggle no-arrow">
-                        <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Conventions <br>
-                            Collectives</span>
-                    </a>
-                </li>
+
 
                 <!-- Périodes de Paie -->
                 <li>
@@ -69,6 +57,19 @@
                         <span class="micon bi bi-cash"></span><span class="mtext">Traitements Paie</span>
                     </a>
 
+                </li>
+                <!-- Convention -->
+                <li>
+                    <a href="{{ route('convention-collectives.index') }}" class="dropdown-toggle no-arrow">
+                        <span class="micon bi bi-file-earmark-text"></span><span class="mtext">Conventions <br>
+                            Collectives</span>
+                    </a>
+                </li>
+                 <!-- Matériels -->
+                 <li>
+                    <a href="{{ route('materials.index') }}" class="dropdown-toggle no-arrow">
+                        <span class="micon bi bi-box-seam"></span><span class="mtext">Attachements</span>
+                    </a>
                 </li>
 
 

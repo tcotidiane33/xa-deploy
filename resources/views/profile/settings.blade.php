@@ -16,14 +16,14 @@
                         <div class="mb-4">
                             <label for="theme" class="block text-sm font-medium text-gray-700">Thème</label>
                             <select name="theme" id="theme" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="light" {{ $settings->where('key', 'theme')->first()->value == 'light' ? 'selected' : '' }}>Clair</option>
-                                <option value="dark" {{ $settings->where('key', 'theme')->first()->value == 'dark' ? 'selected' : '' }}>Sombre</option>
+                                <option value="light" {{ $settings->get('theme') == 'light' ? 'selected' : '' }}>Clair</option>
+                                <option value="dark" {{ $settings->get('theme') == 'dark' ? 'selected' : '' }}>Sombre</option>
                             </select>
                         </div>
                         <div class="mb-4">
                             <label for="notifications" class="block text-sm font-medium text-gray-700">Notifications</label>
                             <div class="flex items-center">
-                                <input type="checkbox" name="notifications" id="notifications" value="1" {{ $settings->where('key', 'notifications')->first()->value ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <input type="checkbox" name="notifications" id="notifications" value="1" {{ $settings->get('notifications') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                                 <label for="notifications" class="ml-2 block text-sm text-gray-900">Activer les notifications</label>
                             </div>
                         </div>

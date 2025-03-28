@@ -13,10 +13,7 @@ class AddUserIdToSettingsTable extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->after('id');
-
-            // Si vous avez une table users et que vous voulez ajouter une contrainte de clé étrangère
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
         });
     }
 

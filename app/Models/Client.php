@@ -214,9 +214,10 @@ class Client extends Model implements AuditableContract
         return $this->belongsTo(User::class, 'binome_id');
     }
 
+        
     public function conventionCollective()
     {
-        return $this->belongsTo(ConventionCollective::class);
+        return $this->belongsTo(ConventionCollective::class, 'convention_collective_id');
     }
 
     public function subClients()

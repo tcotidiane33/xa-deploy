@@ -134,11 +134,15 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit')->with('success', 'Settings updated successfully.');
     }
 
-    public function settings()
+        public function settings()
     {
         $user = Auth::user();
-        $settings = Setting::where('user_id', $user->id)->first();
-        return view('profile.settings', compact('user', 'settings'));
+        $settings = Setting::where('user_id', $user->id)->get()->pluck('value', 'key');
+        $breadcrumbs = [
+            ['link' => route('profile.index'), 'name' => 'Profile'],
+            ['name' => 'Settings'],
+        ];
+        return view('profile.settings', compact('user', 'settings', 'breadcrumbs'));
     }
     // public function updateSettings(Request $request)
     // {

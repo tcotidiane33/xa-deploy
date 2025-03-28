@@ -152,9 +152,22 @@ class ClientController extends Controller
         }
     }
 
-    public function getInfo(Client $client)
+        public function getInfo($id)
     {
-        return response()->json($this->clientService->getClientInfo($client));
+        try {
+            // Utilisation du service pour récupérer les informations du client
+            $clientInfo = $this->clientService->getClientInfo($id);
+
+            // Vérifiez si le service retourne une réponse JSON ou un tableau
+            if ($clientInfo instanceof \Illuminate\Http\JsonResponse) {
+                return $clientInfo; // Retourne directement la réponse JSON
+            }
+
+            return response()->json($clientInfo); // Si c'est un tableau, renvoyez-le en JSON
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la récupération des informations du client : ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur interne du serveur'], 500);
+        }
     }
 
     public function transfer(Request $request)

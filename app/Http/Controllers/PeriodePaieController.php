@@ -81,13 +81,20 @@ class PeriodePaieController extends Controller
     public function create()
     {
         Log::info('Début de la méthode create');
-        return view('periodes_paie.create');
+        $clients = Client::all(); // Récupérer tous les clients
+        Log::info('Fin de la méthode create');
+        $breadcrumbs = [
+            ['link' => "/admin", 'name' => "Admin"],
+            ['link' => "/admin/periodes-paie", 'name' => "Périodes de paie"],
+            ['name' => "Créer"],
+        ];
+        return view('periodes_paie.create', compact('clients', 'breadcrumbs'));
     }
 
     public function store(StorePeriodePaieRequest $request)
     {
         $validated = $request->validated();
-
+        \Log::info('Période de paie validée : ' . json_encode($validated));
         // Vérifier qu'il n'y a qu'une seule période de paie active par mois
         $currentMonth = now()->format('m');
         $currentYear = now()->format('Y');
@@ -101,7 +108,7 @@ class PeriodePaieController extends Controller
         }
 
         $this->periodePaieService->createPeriodePaie($validated);
-
+        \Log::info('Période de paie créée avec succès.');
         return redirect()->route('periodes-paie.index')->with('success', 'Période de paie créée avec succès.');
     }
 

@@ -111,7 +111,11 @@
                 hljs.highlightBlock(block);
             });
         });
+
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wysihtml5/0.3.0/wysihtml5.min.js"></script>
+
+
     @livewireStyles
     <style>
         /* Styles supplémentaires */
@@ -171,13 +175,13 @@
     <div class="mobile-menu-overlay"></div>
 
     <main>
-        @if (session('error'))
-            <div class="alert alert-danger mt-6">
-                {{ session('error') }}
-            </div>
-        @endif
 
         <div class="main-container">
+            @if (session('error'))
+                <div class="alert alert-danger mt-6">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Breadcrumb -->
             <div class="breadcrumb-container bg-gray-100 p-0 rounded-full shadow-sm">
                 <nav class="flex" aria-label="Breadcrumb">
@@ -327,6 +331,8 @@
     <script src="{{ asset('/backoffice/vendors/scripts/layout-settings.js') }}"></script>
     <script src="{{ asset('/backoffice/src/plugins/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ asset('/backoffice/src/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wysihtml5/0.3.0/wysihtml5.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('/backoffice/src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('/backoffice/src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('/backoffice/src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>

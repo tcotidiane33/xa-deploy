@@ -16,8 +16,11 @@ class SettingsController extends Controller
     {
         $settings = Setting::all()->pluck('value', 'key');
         $roles = Role::all()->pluck('name', 'id');
-        
-        return view('admin.settings.index', compact('settings', 'roles'));
+        $breadcrumbs = [
+            ['link' => "/admin", 'name' => "Admin"],
+            ['link' => "/admin/settings", 'name' => "Paramètres"],
+        ];
+        return view('admin.settings.index', compact('settings', 'roles', 'breadcrumbs'));
     }
 
     public function update(Request $request)
@@ -30,7 +33,7 @@ class SettingsController extends Controller
             'company_address' => 'required|string',
             'company_phone' => 'required|string',
             'company_email' => 'required|email',
-            
+
             // Paramètres système
             'maintenance_mode' => 'boolean',
             'default_user_role' => 'required|exists:roles,id',
@@ -38,24 +41,24 @@ class SettingsController extends Controller
             'allow_user_registration' => 'boolean',
             'enable_2fa' => 'boolean',
             'session_lifetime' => 'required|integer|min:1|max:1440',
-            
+
             // Paramètres d'interface
             'theme' => 'required|string|in:light,dark,auto',
             'language' => 'required|string|in:fr,en',
             'timezone' => 'required|string',
             'date_format' => 'required|string',
-            
+
             // Paramètres de notification
             'notifications_enabled' => 'boolean',
             'email_notifications' => 'boolean',
             'push_notifications' => 'boolean',
-            
+
             // Paramètres de sécurité
             'password_expiry_days' => 'required|integer|min:0',
             'max_login_attempts' => 'required|integer|min:1',
             'password_min_length' => 'required|integer|min:8',
             'require_password_special_chars' => 'boolean',
-            
+
             // Paramètres métier
             'default_periode_paie' => 'nullable|exists:periodes_paie,id',
             'enable_client_portal' => 'boolean',

@@ -34,13 +34,14 @@ class FicheClient extends Model
         'maj_fiche_para_file',
         'notes'
     ];
-
     protected $dates = [
         'reception_variables',
         'preparation_bp',
         'validation_bp_client',
         'preparation_envoie_dsn',
-        'accuses_dsn'
+        'accuses_dsn',
+          'created_at',
+        'updated_at'
     ];
 
     protected static function boot()
@@ -48,24 +49,32 @@ class FicheClient extends Model
         parent::boot();
 
         static::creating(function ($ficheClient) {
-            // Vérifier si une fiche existe déjà pour ce client et cette période
+            // Vérifier que le client existe
+            if (!$ficheClient->client) {
+                throw new \Exception('Le client spécifié n\'existe pas.');
+            }
+
+            // Vérifier que la période de paie existe et est active
+            if (!$ficheClient->periodePaie || $ficheClient->periodePaie->validee) {
+                throw new \Exception('La période de paie spécifiée n\'existe pas ou est clôturée.');
+            }
+
+            // Vérifier si une fiche existe déjà
             $existingFiche = static::where('client_id', $ficheClient->client_id)
-                                 ->where('periode_paie_id', $ficheClient->periode_paie_id)
-                                 ->first();
+                ->where('periode_paie_id', $ficheClient->periode_paie_id)
+                ->first();
 
             if ($existingFiche) {
                 throw new \Exception('Une fiche existe déjà pour ce client sur cette période de paie.');
             }
-
-            $ficheClient->notifyAction('created', 'Fiche client créée');
         });
 
         static::updating(function ($ficheClient) {
             // Vérifier si une autre fiche existe déjà pour ce client et cette période
             $existingFiche = static::where('client_id', $ficheClient->client_id)
-                                 ->where('periode_paie_id', $ficheClient->periode_paie_id)
-                                 ->where('id', '!=', $ficheClient->id)
-                                 ->first();
+                ->where('periode_paie_id', $ficheClient->periode_paie_id)
+                ->where('id', '!=', $ficheClient->id)
+                ->first();
 
             if ($existingFiche) {
                 throw new \Exception('Une autre fiche existe déjà pour ce client sur cette période de paie.');
@@ -103,7 +112,7 @@ class FicheClient extends Model
         // $notification->save();
 
         // Envoyer la notification aux utilisateurs responsables et gestionnaires
-        Notification::send([$responsable, $gestionnaire], $notification);
+        // Notification::send([$responsable, $gestionnaire], $notification);
     }
 
     public function periodePaie()

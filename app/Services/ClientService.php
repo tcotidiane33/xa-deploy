@@ -230,10 +230,30 @@ class ClientService
     }
 
 
-    public function getClientInfo(Client $client)
+
+    public function getClientInfo($id)
     {
-        // Récupérer les informations du client
-        return $client;
+        $client = Client::with('conventionCollective')->find($id); // Charge la relation conventionCollective
+
+        if (!$client) {
+            throw new \Exception('Client introuvable');
+        }
+
+        return [
+            'name' => $client->name,
+            'email' => $client->dirigeant_email ?? 'N/A',
+            'phone' => $client->dirigeant_telephone ?? 'N/A',
+            'ville' => $client->ville ?? 'N/A',
+            'convention_collective' => $client->conventionCollective->name ?? 'N/A',
+            'nombre_bulletins' => $client->nb_bulletins ?? 'N/A',
+            'date_mise_a_jour' => $client->updated_at ? $client->updated_at->format('d/m/Y') : 'N/A',
+            'saisie_variables' => $client->saisie_variables ? 'Oui' : 'Non',
+            'date_saisie_variables' => $client->date_saisie_variables ? $client->date_saisie_variables->format('d/m/Y') : 'N/A',
+            'client_forme_saisie' => $client->client_forme_saisie ? 'Oui' : 'Non',
+            'date_formation_saisie' => $client->date_formation_saisie ? $client->date_formation_saisie->format('d/m/Y') : 'N/A',
+            'adhesion_mydrh' => $client->adhesion_mydrh ? 'Oui' : 'Non',
+            'date_adhesion_mydrh' => $client->date_adhesion_mydrh ? $client->date_adhesion_mydrh->format('d/m/Y') : 'N/A',
+        ];
     }
 
     public function transferClients(Request $request)

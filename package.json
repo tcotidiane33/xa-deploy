@@ -20,6 +20,7 @@
         "@tailwindcss/forms": "^0.3.4",
         "autoprefixer": "^10.4.0",
         "deskapp": "^0.0.2",
+        "flatpickr": "^4.6.13",
         "laravel-mix": "^6.0.31",
         "lottie-web": "^5.7.13",
         "npm": "^10.9.0",

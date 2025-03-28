@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('clients', ClientController::class);
     Route::resource('clients.materials', MaterialController::class);
-    Route::get('/clients/{client}/info', [ClientController::class, 'getInfo'])->name('clients.info');
+    // Route::get('/clients/{client}/info', [ClientController::class, 'getInfo'])->name('clients.info');
     Route::post('/clients/store-partial', [ClientController::class, 'storePartial'])->name('clients.storePartial');
     Route::post('/clients/validate-step/{step}', [ClientController::class, 'validateStep'])->name('clients.validateStep');
     Route::put('/clients/{client}/update-partial/{step}', [ClientController::class, 'updatePartial'])->name('clients.updatePartial');
@@ -78,21 +78,13 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('periodes-paie/{periodes_paie}/cloturer', [PeriodePaieController::class, 'cloturer'])->name('periodes-paie.cloturer');
     Route::patch('periodes-paie/{periodes_paie}/decloturer', [PeriodePaieController::class, 'decloturer'])->name('periodes-paie.decloturer');
     Route::patch('/periodes-paie/migrate', [PeriodePaieController::class, 'migrateAllClients'])->name('periodes-paie.migrate');
-
-    Route::resource('fiches-clients', FicheClientController::class);
-    // Routes éclatées pour FicheClientController
-    Route::get('fiches-clients', [FicheClientController::class, 'index'])->name('fiches-clients.index');
-    Route::get('fiches-clients/create', [FicheClientController::class, 'create'])->name('fiches-clients.create');
-    Route::post('fiches-clients', [FicheClientController::class, 'store'])->name('fiches-clients.store');
-    // Route::get('fiches-clients/{fiches_client}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
-    // Route::get('fiches-clients/{ficheClient}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
-    Route::get('fiches-clients/{fiches_client}/edit', [FicheClientController::class, 'edit'])->name('fiches-clients.edit');
-    // Route::put('fiches-clients/{fiches_client}', [FicheClientController::class, 'update'])->name('fiches-clients.update');
-    Route::delete('fiches-clients/{fiches_client}', [FicheClientController::class, 'destroy'])->name('fiches-clients.destroy');
-    Route::post('fiches-clients/migrate', [FicheClientController::class, 'migrateToNewPeriod'])->name('fiches-clients.migrate');
-
+    // get infps client
+    Route::get('clients/{id}/info', [ClientController::class, 'getInfo'])->name('clients.info');
+    Route::resource('fiches-clients', FicheClientController::class)->except(['show']);
+    Route::get('fiches-clients/{ficheClient}', [FicheClientController::class, 'show'])->name('fiches-clients.show');
     Route::get('fiches-clients/export/excel', [FicheClientController::class, 'exportExcel'])->name('fiches-clients.export.excel');
     Route::get('fiches-clients/export/pdf', [FicheClientController::class, 'exportPDF'])->name('fiches-clients.export.pdf');
+    Route::post('fiches-clients/migrate', [FicheClientController::class, 'migrateToNewPeriod'])->name('fiches-clients.migrate');
 
     Route::put('periodes-paie/update-fiche-client/{ficheClient}', [PeriodePaieController::class, 'updateFicheClient'])->name('periodes-paie.updateFicheClient');
     Route::put('traitements-paie/update-fiche-client/{ficheClient}', [TraitementPaieController::class, 'updateFicheClient'])->name('traitements-paie.updateFicheClient');
@@ -189,8 +181,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     Route::put('/relations/{relation}', [RelationController::class, 'update'])->name('admin.client_user.update');
     Route::delete('/relations/{relation}', [RelationController::class, 'destroy'])->name('admin.client_user.destroy');
 
-    Route::get('client_user/{id}/edit', 'RelationController@edit')->name('client_user.edit');
-    Route::put('client_user/{id}', 'RelationController@update')->name('client_user.update');
+    // Route::get('client_user/{id}/edit', 'RelationController@edit')->name('client_user.edit');
+    // Route::put('client_user/{id}', 'RelationController@update')->name('client_user.update');
 
     // Routes pour les sauvegardes système
     Route::prefix('backups')->name('backups.')->group(function () {

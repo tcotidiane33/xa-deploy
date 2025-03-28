@@ -40,46 +40,58 @@ class FicheClientController extends Controller
             ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
         ];
 
-        return view('clients.fiches_clients.index', compact('fichesClients', 'clients','tickets','posts', 'periodesPaie', 'breadcrumbs', 'ficheClient'));
+        return view('clients.fiches_clients.index', compact('fichesClients', 'clients', 'tickets', 'posts', 'periodesPaie', 'breadcrumbs', 'ficheClient'));
     }
+
 
     public function create()
     {
-        $clients = Client::all();
-        $periodesPaie = PeriodePaie::all();
+        $clients = Client::all(); // Récupère tous les clients
+        $periodesPaie = PeriodePaie::where('validee', false)->get(); // Récupère uniquement les périodes non clôturées
         $breadcrumbs = [
             ['name' => 'Fiches Clients', 'url' => route('fiches-clients.index')],
-            ['name' => 'Create Fiches Clients', 'url' => route('fiches-clients.create')],
+            ['name' => 'Créer une Fiche Client', 'url' => route('fiches-clients.create')],
         ];
         return view('clients.fiches_clients.create', compact('clients', 'periodesPaie', 'breadcrumbs'));
     }
-
-    // public function store(StoreFicheClientRequest $request)
-    // {
-    //     $validated = $request->validated();
-    //     \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
-
-    //     FicheClient::create($validated);
-
-    //     return redirect()->route('fiches-clients.index')->with('success', 'Fiche client créée avec succès.');
-    // }
-
-    public function store(StoreFicheClientRequest $request)
+        public function store(StoreFicheClientRequest $request)
         {
             try {
-                $validated = $request->validated();
-                \Log::info('Validated Data:', $validated);
+                // Log des données reçues pour le débogage
+                \Log::info('Données reçues :', $request->all());
 
-                FicheClient::create($validated);
+                // Valider les données
+                $validated = $request->validated();
+
+                // Créer la fiche client avec toutes les données
+                $ficheClient = FicheClient::create([
+                    'client_id' => $validated['client_id'],
+                    'periode_paie_id' => $validated['periode_paie_id'],
+                    'reception_variables' => $validated['reception_variables'] ?? null,
+                    'preparation_bp' => $validated['preparation_bp'] ?? null,
+                    'validation_bp_client' => $validated['validation_bp_client'] ?? null,
+                    'preparation_envoie_dsn' => $validated['preparation_envoie_dsn'] ?? null,
+                    'accuses_dsn' => $validated['accuses_dsn'] ?? null,
+                    'notes' => $validated['notes'] ?? null
+                ]);
+
+                // Log de confirmation
+                \Log::info('Fiche client créée :', ['id' => $ficheClient->id]);
 
                 return redirect()
                     ->route('fiches-clients.index')
                     ->with('success', 'Fiche client créée avec succès.');
             } catch (\Exception $e) {
+                // Log de l'erreur
+                \Log::error('Erreur lors de la création de la fiche client :', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+
                 return redirect()
                     ->back()
                     ->withInput()
-                    ->with('error', $e->getMessage());
+                    ->with('error', 'Erreur lors de la création de la fiche client : ' . $e->getMessage());
             }
         }
 
@@ -116,22 +128,15 @@ class FicheClientController extends Controller
                 ->with('error', $e->getMessage());
         }
     }
-    // public function update(UpdateFicheClientRequest $request, FicheClient $fiches_client)
-    // {
-    //     $validated = $request->validated();
-    //     \Log::info('Validated Data:', $validated); // Ajoutez cette ligne pour vérifier les données validées
 
-    //     if (!empty($validated['notes'])) {
-    //         $newNotes = $fiches_client->notes . "\n" . now()->format('Y-m-d') . ': ' . $validated['notes'];
-    //         $validated['notes'] = $newNotes;
-    //     }
-
-    //     $fiches_client->update($validated);
-
-    //     return redirect()->route('fiches-clients.index')->with('success', 'Informations mises à jour avec succès.');
-    // }
-    public function show(FicheClient $ficheClient)
+    public function show($id)
     {
+        $ficheClient = FicheClient::find($id);
+
+        if (!$ficheClient) {
+            return redirect()->route('fiches-clients.index')->with('error', 'Fiche client introuvable.');
+        }
+
         return response()->json($ficheClient);
     }
 
@@ -175,55 +180,124 @@ class FicheClientController extends Controller
         return $pdf->download('fiches_clients.pdf');
     }
 
-    public function migrateToNewPeriod(Request $request)
-{
-    Log::info('Début de la migration des fiches clients.');
+        public function migrateToNewPeriod(Request $request)
+    {
+        try {
+            Log::info('Début de la migration manuelle des fiches clients.');
 
-    $request->validate([
-        'periode_paie_id' => 'required|exists:periodes_paie,id',
-    ]);
+            // Valider la période cible
+            $request->validate([
+                'periode_paie_id' => 'required|exists:periodes_paie,id',
+            ]);
 
-    $currentPeriod = PeriodePaie::find($request->periode_paie_id);
-    Log::info('Période de paie sélectionnée : ', ['periode_paie_id' => $request->periode_paie_id]);
+            // Récupérer la période cible
+            $targetPeriod = PeriodePaie::findOrFail($request->periode_paie_id);
 
-    if (!$currentPeriod) {
-        Log::error('Période de paie sélectionnée non trouvée.');
-        return redirect()->route('fiches-clients.index')->with('error', 'Période de paie sélectionnée non trouvée.');
+            // Vérifier que la période cible est active
+            if ($targetPeriod->validee) {
+                return redirect()
+                    ->route('fiches-clients.index')
+                    ->with('error', 'La période de paie sélectionnée est déjà clôturée.');
+            }
+
+            // Récupérer tous les clients qui n'ont pas encore de fiche pour cette période
+            $clientsWithoutFiche = Client::whereNotIn('id', function ($query) use ($targetPeriod) {
+                $query->select('client_id')
+                    ->from('fiches_clients')
+                    ->where('periode_paie_id', $targetPeriod->id);
+            })->get();
+
+            if ($clientsWithoutFiche->isEmpty()) {
+                return redirect()
+                    ->route('fiches-clients.index')
+                    ->with('info', 'Tous les clients ont déjà une fiche pour cette période.');
+            }
+
+            // Créer les nouvelles fiches clients
+            $count = 0;
+            foreach ($clientsWithoutFiche as $client) {
+                FicheClient::create([
+                    'client_id' => $client->id,
+                    'periode_paie_id' => $targetPeriod->id,
+                    'notes' => "Fiche créée automatiquement lors de la migration manuelle le " . now()->format('d/m/Y H:i')
+                ]);
+                $count++;
+
+                // Notifier pour chaque client migré
+                Log::info("Client {$client->name} migré vers la période {$targetPeriod->reference}");
+            }
+
+            // Journal des actions
+            Log::info('Migration manuelle terminée', [
+                'periode' => $targetPeriod->reference,
+                'nombre_clients' => $count
+            ]);
+
+            // Notification de succès avec le nombre de clients migrés
+            return redirect()
+                ->route('fiches-clients.index')
+                ->with('success', "Migration réussie : {$count} client(s) migré(s) vers la période {$targetPeriod->reference}");
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la migration manuelle :', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()
+                ->route('fiches-clients.index')
+                ->with('error', 'Erreur lors de la migration : ' . $e->getMessage());
+        }
     }
+    // public function migrateToNewPeriod(Request $request)
+    // {
+    //     Log::info('Début de la migration des fiches clients.');
 
-    $previousPeriod = PeriodePaie::where('validee', true)->latest()->first();
-    Log::info('Dernière période de paie clôturée : ', ['periode_paie_id' => $previousPeriod->id ?? 'Aucune']);
+    //     $request->validate([
+    //         'periode_paie_id' => 'required|exists:periodes_paie,id',
+    //     ]);
 
-    if (!$previousPeriod) {
-        Log::error('Aucune période de paie précédente trouvée.');
-        return redirect()->route('fiches-clients.index')->with('error', 'Aucune période de paie précédente trouvée.');
-    }
+    //     $currentPeriod = PeriodePaie::find($request->periode_paie_id);
+    //     Log::info('Période de paie sélectionnée : ', ['periode_paie_id' => $request->periode_paie_id]);
 
-    $previousFichesClients = $previousPeriod->fichesClients;
-    Log::info('Nombre de fiches clients à migrer : ', ['count' => $previousFichesClients->count()]);
+    //     if (!$currentPeriod) {
+    //         Log::error('Période de paie sélectionnée non trouvée.');
+    //         return redirect()->route('fiches-clients.index')->with('error', 'Période de paie sélectionnée non trouvée.');
+    //     }
 
-    foreach ($previousFichesClients as $previousFicheClient) {
-        Log::info('Migration de la fiche client : ', ['fiche_client_id' => $previousFicheClient->id]);
+    //     $previousPeriod = PeriodePaie::where('validee', true)->latest()->first();
+    //     Log::info('Dernière période de paie clôturée : ', ['periode_paie_id' => $previousPeriod->id ?? 'Aucune']);
 
-        $previousFicheClient->update([
-            'periode_paie_id' => $currentPeriod->id,
-            'reception_variables' => null,
-            'reception_variables_file' => null,
-            'preparation_bp' => null,
-            'preparation_bp_file' => null,
-            'validation_bp_client' => null,
-            'validation_bp_client_file' => null,
-            'preparation_envoie_dsn' => null,
-            'preparation_envoie_dsn_file' => null,
-            'accuses_dsn' => null,
-            'accuses_dsn_file' => null,
-        ]);
+    //     if (!$previousPeriod) {
+    //         Log::error('Aucune période de paie précédente trouvée.');
+    //         return redirect()->route('fiches-clients.index')->with('error', 'Aucune période de paie précédente trouvée.');
+    //     }
 
-        Log::info('Fiche client migrée avec succès : ', ['fiche_client_id' => $previousFicheClient->id]);
-    }
+    //     $previousFichesClients = $previousPeriod->fichesClients;
+    //     Log::info('Nombre de fiches clients à migrer : ', ['count' => $previousFichesClients->count()]);
 
-    Log::info('Fin de la migration des fiches clients.');
+    //     foreach ($previousFichesClients as $previousFicheClient) {
+    //         Log::info('Migration de la fiche client : ', ['fiche_client_id' => $previousFicheClient->id]);
 
-    return redirect()->route('fiches-clients.index')->with('success', 'Toutes les fiches clients ont été migrées vers la nouvelle période de paie.');
-}
+    //         $previousFicheClient->update([
+    //             'periode_paie_id' => $currentPeriod->id,
+    //             'reception_variables' => null,
+    //             'reception_variables_file' => null,
+    //             'preparation_bp' => null,
+    //             'preparation_bp_file' => null,
+    //             'validation_bp_client' => null,
+    //             'validation_bp_client_file' => null,
+    //             'preparation_envoie_dsn' => null,
+    //             'preparation_envoie_dsn_file' => null,
+    //             'accuses_dsn' => null,
+    //             'accuses_dsn_file' => null,
+    //         ]);
+
+    //         Log::info('Fiche client migrée avec succès : ', ['fiche_client_id' => $previousFicheClient->id]);
+    //     }
+
+    //     Log::info('Fin de la migration des fiches clients.');
+
+    //     return redirect()->route('fiches-clients.index')->with('success', 'Toutes les fiches clients ont été migrées vers la nouvelle période de paie.');
+    // }
 }

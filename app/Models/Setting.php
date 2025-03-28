@@ -9,7 +9,7 @@ class Setting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['key', 'value', 'group', 'type', 'description'];
+    protected $fillable = ['key', 'value', 'group', 'type', 'description', 'user_id']; // Ajout de 'user_id'
 
     protected static $cache_key = 'app_settings';
     protected static $cache_duration = 1440; // 24 heures
@@ -29,7 +29,7 @@ class Setting extends Model
 
         // Mise à jour du cache
         Cache::forget(static::$cache_key);
-        
+
         return $setting;
     }
 
